@@ -1,0 +1,22 @@
+﻿CREATE VIEW [dbo].[V_UretimQuery01]
+AS
+SELECT     dbo.UretimOperasyonlari.OID AS UretimId, dbo.UretimOperasyonlari.IsEmriId, dbo.UretimOperasyonlari.IsEmriNo, dbo.UretimOperasyonlari.IstasyonId, dbo.UretimOperasyonlari.IstasyonKod, 
+                      dbo.UretimOperasyonlari.MalzemeId, dbo.UretimOperasyonlari.OperasyonId, dbo.UretimOperasyonlari.OperasyonNo, dbo.UretimOperasyonlari.OperasyonKod, dbo.UretimOperasyonlari.BirimId, 
+                      dbo.UretimOperasyonlari.Birim, dbo.UretimOperasyonlari.Miktar, dbo.UretimOperasyonlari.NetMiktar, dbo.UretimOperasyonlari.FireMiktari, dbo.f_UretilenMiktar(dbo.UretimOperasyonlari.IsEmriId, 
+                      dbo.UretimOperasyonlari.OperasyonId) AS UretilenMiktar, ISNULL(dbo.IsEmirleri.PlanlananMiktar, 0) AS PlanlananMiktar, dbo.UretimOperasyonlari.BaslangicTarihi, 
+                      dbo.UretimOperasyonlari.BitisTarihi, dbo.UretimOperasyonlari.UretimSuresi, dbo.UretimOperasyonlari.NetUretimSuresi, dbo.UretimOperasyonlari.KatSayi1, dbo.UretimOperasyonlari.KatSayi2, 
+                      dbo.UretimOperasyonlari.Aciklama, dbo.UretimOperasyonlari.Aciklama2, dbo.UretimOperasyonlari.Aciklama3, dbo.UretimOperasyonlari.Aciklama4, dbo.UretimOperasyonlari.Aciklama5, 
+                      dbo.UretimOperasyonlari.Durum AS UretimDurum, dbo.Vardiyalar.VardiyaId, dbo.Vardiyalar.VardiyaKod, dbo.Vardiyalar.Aciklama AS VardiyaAciklama, 
+                      dbo.UretimOperasyonlari.Ambalaj AS AmbalajId, dbo.UretimOperasyonlari.IsEmriDetayId, dbo.Malzemeler.MalzemeKod, dbo.Malzemeler.MalzemeAd, dbo.Operasyonlar.OperasyonAd, 
+                      dbo.Ambalajlar.Barkod, dbo.AmbalajDetaylari.Kalan AS AmbalajMiktar, dbo.Cariler.CariId, dbo.Cariler.CariAd, dbo.Cariler.CariKod, ISNULL(dbo.UretimOperasyonlari.EkAlan1, '') AS EkAlan1, 
+                      ISNULL(dbo.UretimOperasyonlari.EkAlan2, '') AS EkAlan2, ISNULL(dbo.UretimOperasyonlari.EkAlan3, '') AS EkAlan3, ISNULL(dbo.UretimOperasyonlari.EkAlan4, '') AS EkAlan4, 
+                      dbo.UretimOperasyonlari.TasarimGrupId
+FROM         dbo.UretimOperasyonlari WITH (NOLOCK) LEFT OUTER JOIN
+                      dbo.Operasyonlar ON dbo.UretimOperasyonlari.OperasyonId = dbo.Operasyonlar.OperasyonId LEFT OUTER JOIN
+                      dbo.IsEmirleri ON dbo.UretimOperasyonlari.IsEmriId = dbo.IsEmirleri.IsEmriId LEFT OUTER JOIN
+                      dbo.Malzemeler ON dbo.UretimOperasyonlari.MalzemeId = dbo.Malzemeler.MalzemeId LEFT OUTER JOIN
+                      dbo.Vardiyalar WITH (NOLOCK) ON dbo.UretimOperasyonlari.Vardiya = dbo.Vardiyalar.VardiyaId LEFT OUTER JOIN
+                      dbo.Ambalajlar WITH (NOLOCK) ON dbo.UretimOperasyonlari.Ambalaj = dbo.Ambalajlar.OID LEFT OUTER JOIN
+                      dbo.AmbalajDetaylari ON dbo.Ambalajlar.OID = dbo.AmbalajDetaylari.Ambalaj LEFT OUTER JOIN
+                      dbo.Cariler ON dbo.UretimOperasyonlari.CariId = dbo.Cariler.CariId
+WHERE     (dbo.UretimOperasyonlari.Durum = 0)

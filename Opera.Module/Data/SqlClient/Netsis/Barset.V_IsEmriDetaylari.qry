@@ -1,0 +1,24 @@
+﻿/*select * from [Barset].[V_IsEmirleri]*/
+CREATE VIEW [Barset].[V_IsEmriDetaylari]
+AS
+SELECT        TOP (100) PERCENT Barset.fn_MikrobarKey(E.ISEMRINO) AS IsEmriId, Barset.fn_Turkcelestir(E.ISEMRINO) AS IsEmriNo, E.TARIH AS BaslangicTarihi, 
+                         Barset.fn_MikrobarKey(E.STOK_KODU) AS MalzemeId, E.STOK_KODU AS MalzemeKod, Barset.fn_Turkcelestir(S.STOK_ADI) AS MalzemeAd, 
+                         ISNULL(E.PROJE_KODU, '') AS Aciklama, CASE WHEN M.XURET_OLCU_BR = 1 THEN Barset.fn_MikrobarKey(S.OLCU_BR1) 
+                         WHEN M.XURET_OLCU_BR = 2 THEN Barset.fn_MikrobarKey(S.OLCU_BR2) ELSE Barset.fn_MikrobarKey(S.OLCU_BR3) END AS BirimId, 
+                         CASE WHEN M.XURET_OLCU_BR = 1 THEN S.OLCU_BR1 WHEN M.XURET_OLCU_BR = 2 THEN S.OLCU_BR2 ELSE S.OLCU_BR3 END AS Birim, SUM(E.MIKTAR) 
+                         AS PlanlananMiktar, ISNULL
+                             ((SELECT        SUM(STHAR_GCMIK) AS Expr1
+                                 FROM            dbo.TBLSTHAR AS H WITH (NOLOCK)
+                                 WHERE        (E.ISEMRINO = STHAR_SIPNUM) AND (SUBE_KODU = 6) AND (STHAR_HTUR = 'C') AND (STHAR_GCKOD = 'G') AND (STHAR_BGTIP = 'U')), 0) 
+                         AS UretilenMiktar, E.ONCELIK, ISNULL(E.REFISEMRINO, '') AS OzelKod, ISNULL(E.YAPKOD, '') AS DigerId, ISNULL(Y.YAPACIK, '') AS DigerKod1, 
+                         E.TESLIM_TARIHI AS BitisTarihi, R.INCKEYNO AS IsEmriDetayId, Barset.fn_MikrobarKey(R.HAM_KODU) AS OperasyonId, R.OPNO AS OperasyonNo, 
+                         R.HAM_KODU AS OperasyonKod, R.ISTKODU AS IstasyonKod
+FROM            dbo.TBLISEMRI AS E WITH (NOLOCK) LEFT OUTER JOIN
+                         dbo.TBLSTSABIT AS S WITH (NOLOCK) ON E.STOK_KODU = S.STOK_KODU LEFT OUTER JOIN
+                         dbo.TBLESNYAPMAS AS Y WITH (NOLOCK) ON Y.YAPKOD = E.YAPKOD LEFT OUTER JOIN
+                         dbo.TBLSTOKURM AS R WITH (NOLOCK) ON E.STOK_KODU = R.MAMUL_KODU LEFT OUTER JOIN
+                         dbo.TBLESNSTMAS AS M WITH (NOLOCK) ON S.STOK_KODU = M.STOKKODU
+WHERE        (E.KAPALI <> N'E') AND (R.OPR_BIL = N'O')
+GROUP BY E.ISEMRINO, E.TARIH, E.STOK_KODU, S.STOK_ADI, E.PROJE_KODU, E.ONCELIK, E.REFISEMRINO, E.YAPKOD, Y.YAPACIK, E.TESLIM_TARIHI, R.INCKEYNO, 
+                         R.OPNO, R.ISTKODU, M.XURET_OLCU_BR, M.XURET_OLCU_BR, S.OLCU_BR1, M.XURET_OLCU_BR, S.OLCU_BR2, S.OLCU_BR3, R.HAM_KODU
+ORDER BY MalzemeId

@@ -1,0 +1,51 @@
+.dayShift div {
+    background: url(sun.png) no-repeat left center;
+}
+
+.nightShift div {
+    background: url(bluemoon.png) no-repeat left center;
+}
+
+.zoomIn {
+    background: url(zoom_in.png) no-repeat left center;
+}
+
+.zoomOut {
+    background: url(zoom_out.png) no-repeat left center;
+}
+
+.zoomMax {
+    background: url(magnifier_zoom_in.png) no-repeat left center;
+}
+
+.zoomMin {
+    background: url(magnifier_zoom_out.png) no-repeat left center;
+}
+
+.sch-event {
+    background-color: #DDDDDD;
+    background-image: -moz-linear-gradient(center top, #EEEEEE, #CCCCCC);
+    border: 1px solid #777777;
+    border-radius: 0.2em 0.2em 0.2em 0.2em;
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, 0.8) inset, 0 1px 0 rgba(0, 0, 0, 0.3);
+    color: #333;
+    text-decoration: none;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    white-space: nowrap;
+}
+
+.sch-event-inner {
+    margin: 0;
+}
+
+.value {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.1);
+    border-radius: 0.15em 0 0 0.15em;
+    box-shadow: 1px 0 0 rgba(0, 0, 0, 0.5), 2px 0 0 rgba(255, 255, 255, 0.5);
+    float: left;
+    font: bold 1.4em/27px Tahoma;
+    height: inherit;
+    padding-left: 4px;
+    padding-right: 4px;
+    pointer-events: none;
+}

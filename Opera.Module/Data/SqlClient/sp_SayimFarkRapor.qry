@@ -1,0 +1,131 @@
+﻿IF N'#ErpTur#' = N'Progress' BEGIN
+
+CREATE PROCEDURE [dbo].[sp_SayimFarkRapor]
+(
+	@DEPOKOD NVARCHAR(20), --SET @DEPOKOD = 'A00100'
+	@EMIRID NVARCHAR(10)
+)
+AS BEGIN
+--[dbo].[sp_SayimFarkRapor] 'F09100', '6'
+SET NOCOUNT ON
+
+IF OBJECT_ID('tempdb..#say0001') IS NOT NULL BEGIN DROP TABLE #say0001 END
+
+CREATE TABLE #say0001
+(
+	depo_kod NVARCHAR(20) NULL,
+	stok_kod NVARCHAR(30) NULL,
+	stok_ad NVARCHAR(90) NULL,
+	birim NVARCHAR(10) NULL,
+	stok_miktar DECIMAL(18,4) NULL,
+	sayim_miktar DECIMAL(18,4) NULL,
+	aktif_pasif NVARCHAR(10) NULL,
+	durum BIT DEFAULT(0),
+	aciklama NVARCHAR(50) DEFAULT('')
+)
+DECLARE @AKTIFMI TABLE (MalzemeKod NVARCHAR(64), AktifPasif NVARCHAR(10), Durum BIT DEFAULT(0))
+DECLARE @OkunanMiktar DECIMAL(18,4),  @MalzemeKod NVARCHAR(30), @AktifPasif NVARCHAR(30), @IntVariable INTEGER, @ParmDefinition NVARCHAR(500)
+DECLARE @depo_kod NVARCHAR(20), @stok_kod NVARCHAR(30), @birim NVARCHAR(10), @stok_miktar DECIMAL(18,4), @aciklama NVARCHAR(50), @FirmaKod NVARCHAR(30)
+DECLARE @COMMAND NVARCHAR(900) 
+SELECT @ParmDefinition = N'@aktifpasif NVARCHAR(10) OUTPUT', @FirmaKod = N'ARMA2011'
+SET @COMMAND = N'INSERT INTO #say0001 (depo_kod, stok_kod, stok_ad, birim, stok_miktar, aktif_pasif, durum, aciklama) SELECT *, 0 AS durum, NULL AS aciklama  FROM OPENQUERY(UYUMDB, '--'select depo_kod, stok_kod, stok_ad, birim, stok_miktar from pub.depo_stok where stok_miktar > 0 and firma_kod = ''''ARMA2011'''' and depo_kod = ''''' + @DEPOKOD + ''''''') '
+SET @COMMAND = @COMMAND + ''' select d.depo_kod, d.stok_kod, d.stok_ad, d.birim, d.stok_miktar, s.aktif_pasif '
+SET @COMMAND = @COMMAND + ' from pub.depo_stok d, pub.stok_kart s where d.firma_kod = s.firma_kod and d.stok_kod = s.stok_kod and d.stok_miktar > 0 and d.firma_kod = ''''ARMA2011'''' and d.depo_kod = ''''' + @DEPOKOD + ''''''') '
+
+PRINT @COMMAND
+EXEC(@COMMAND)
+
+WHILE (SELECT COUNT(*) FROM #say0001 WITH (NOLOCK) WHERE ( durum = 0 ) AND (depo_kod = @DEPOKOD) ) > 0 BEGIN
+	SELECT TOP 1 @depo_kod = depo_kod, @stok_kod = stok_kod, @birim = birim, @stok_miktar = stok_miktar FROM #say0001 WITH (NOLOCK) WHERE ( durum = 0 ) AND (depo_kod = @DEPOKOD)
+	
+	SELECT @MalzemeKod = MalzemeKod, @OkunanMiktar = SUM(OkunanMiktar)
+	FROM dbo.SayimDetaylari WITH (NOLOCK) 
+	WHERE 		
+		--(Durum = 1) 
+		--AND 
+		(SayimEmriId = @EMIRID)
+		AND (DepoKod = @depo_kod)	
+		AND (MalzemeKod = @stok_kod)
+		AND (Durum = 0 OR Durum = 3)
+	GROUP BY MalzemeKod
+	
+	
+	IF @MalzemeKod IS NULL AND (@depo_kod = @DEPOKOD) BEGIN
+		SET @aciklama = N'0-Uyumda Var Sayimda Yok!'
+	END
+	
+	IF @stok_kod = @MalzemeKod BEGIN
+	
+		IF @MalzemeKod IS NOT NULL AND (@OkunanMiktar = @stok_miktar) AND (@depo_kod = @DEPOKOD) BEGIN
+			SET @aciklama = N'1-Uyum Kaydi Ve Sayım Kaydi Eşit'	
+		END
+		
+		IF @MalzemeKod IS NOT NULL AND (@OkunanMiktar > @stok_miktar) AND (@depo_kod = @DEPOKOD) BEGIN
+			SET @aciklama = N'2-Sayilan Miktar Uyum Miktarından Fazla'	
+		END
+		
+		IF @MalzemeKod IS NOT NULL AND (@OkunanMiktar < @stok_miktar) AND (@depo_kod = @DEPOKOD) BEGIN
+			SET @aciklama = N'3-Uyum Miktari Sayim Miktarından Fazla'	
+		END
+		
+		--UPDATE #say0001 SET durum = 1, aciklama = @aciklama, sayim_miktar = ISNULL(@OkunanMiktar, 0) WHERE (@depo_kod = depo_kod) AND (@stok_kod = stok_kod) AND (@birim = birim) AND (@stok_miktar = stok_miktar)
+		
+	END
+	ELSE BEGIN
+		SET @aciklama = N'4-Uyum Var Sayimda Yok!!'
+		SET @OkunanMiktar = 0
+	END
+	
+	UPDATE #say0001 SET durum = 1, aciklama = @aciklama, sayim_miktar = ISNULL(@OkunanMiktar, 0) WHERE (@depo_kod = depo_kod) AND (@stok_kod = stok_kod) AND (@birim = birim) AND (@stok_miktar = stok_miktar)
+	PRINT @stok_kod + ' --> ' + @MalzemeKod --@aciklama
+END
+
+INSERT INTO @AKTIFMI
+SELECT  
+	MalzemeKod AS MalzemeKod,
+	'' AS AktifPasif,	 
+	0 AS Durum 
+FROM dbo.SayimDetaylari WITH (NOLOCK) 
+WHERE DepoKod + MalzemeKod COLLATE SQL_Latin1_General_CP1254_CS_AS NOT IN (SELECT depo_kod + stok_kod FROM #say0001 WITH (NOLOCK))
+AND DepoKod = @DEPOKOD
+--AND (Durum = 0 OR Durum = 3)
+GROUP BY MalzemeKod, DepoKod
+ORDER BY MalzemeKod
+
+WHILE (SELECT COUNT(*) FROM @AKTIFMI WHERE Durum = 0) > 0 BEGIN
+	SELECT TOP 1 @MalzemeKod = MalzemeKod FROM @AKTIFMI WHERE Durum = 0
+	
+	SET @COMMAND = N'SELECT @aktifpasif = PASIF FROM OPENQUERY(UYUMDB, '
+	SET @COMMAND = @COMMAND + N''' select s.aktif_pasif as PASIF from pub.stok_kart s ' 
+	SET @COMMAND = @COMMAND + ' where s.firma_kod = ''''' + @FirmaKod + ''''' and s.stok_kod = ''''' + @MalzemeKod + ''''' group by s.aktif_pasif '') '
+	
+	EXECUTE sp_executesql @COMMAND, @ParmDefinition, @aktifpasif = @AktifPasif OUTPUT;
+	UPDATE @AKTIFMI SET Durum = 1, AktifPasif = @AktifPasif WHERE MalzemeKod = @MalzemeKod;
+	
+END -- END WHILE
+
+
+INSERT INTO #say0001 (depo_kod, stok_kod, birim, stok_miktar, sayim_miktar, aktif_pasif, aciklama)
+SELECT 
+	S.DepoKod AS depo_kod, 
+	S.MalzemeKod AS stok_kod, 	
+	S.Birim AS birim, 
+	0 AS stok_miktar, 
+	S.OkunanMiktar AS sayim_miktar,
+	A.AktifPasif AS aktif_pasif,	 
+	N'5-Sayimda Var Uyumda Yok!' AS aciklama 
+FROM dbo.SayimDetaylari S WITH (NOLOCK) INNER JOIN @AKTIFMI A ON S.MalzemeKod = A.MalzemeKod
+WHERE S.DepoKod + S.MalzemeKod COLLATE SQL_Latin1_General_CP1254_CS_AS NOT IN (SELECT depo_kod + stok_kod FROM #say0001 WITH (NOLOCK))
+AND S.DepoKod = @DEPOKOD
+--AND (Durum = 0 OR Durum = 3)
+ORDER BY S.DepoKod
+
+SELECT depo_kod, stok_kod, birim, SUM(stok_miktar) AS stok_miktar, SUM(sayim_miktar) AS sayim_miktar, aktif_pasif, aciklama FROM #say0001
+--where stok_kod = '543000 FS 0000018'
+GROUP BY depo_kod, stok_kod, birim, aktif_pasif, aciklama
+ORDER BY aciklama
+END
+
+
+
+END

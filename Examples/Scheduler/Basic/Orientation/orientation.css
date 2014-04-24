@@ -1,0 +1,85 @@
+﻿.sch-event-inner {
+    height: auto !important;
+}
+
+.sch-event dt {
+    font-weight: bold;
+    color: #999;
+}
+
+.Meeting {
+    background: url(user_orange.png) no-repeat left top;
+}
+
+.Call {
+    background: url(phone_sound.png) no-repeat left top;
+}
+
+.sch-resourcecolumn-header .x-column-header-text {
+    background: url(user.png) no-repeat left center;
+    padding-left: 20px;
+    display: inline-block;
+}
+
+.icon-horizontal {
+    background: url(horizontal.png) no-repeat left center;
+}
+
+.icon-vertical {
+    background: url(vertical.png) no-repeat left center;
+}
+
+.sch-horizontal .x-grid-inner-locked tr {
+    background-image: url(transp-1px.png);
+    background-repeat: repeat-x;
+}
+
+.x-grid-inner-locked .x-grid-cell {
+    background-color: transparent;
+}
+
+.Jake {
+    background-color: whitesmoke;
+}
+
+.King {
+    background-color: Aqua;
+}
+
+.Brian {
+    background-color: BlanchedAlmond;
+}
+
+.Mike {
+    background-color: BlanchedAlmond;
+}
+
+.Karen {
+    background-color: BlanchedAlmond;
+}
+
+.Linda {
+    background-color: AliceBlue;
+}
+
+.Don {
+    background-color: Khaki;
+}
+
+.Doug {
+    background-color: Plum;
+}
+
+.Peter {
+    background-color: Gold;
+}
+
+.lunch-style {
+    background: #F5F5F5 url(coffee.jpg) no-repeat center center;
+    z-index: 1;
+    border: 1px dashed #ddd;
+}
+
+.sch-event-inner dd {
+    margin: 0px;
+}

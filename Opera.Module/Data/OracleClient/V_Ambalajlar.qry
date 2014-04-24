@@ -1,0 +1,34 @@
+﻿CREATE OR REPLACE VIEW "ELTRM"."V_Ambalajlar" AS 
+SELECT 
+AMB."SeriNo", AMB."Barkod", RAF."Barkod" AS "RafBarkod", DPO."Barkod" AS "DepoBarkod", BRM."Birim",
+                      DTY."Miktar", DTY."Kalan", DTY."Miktar2", DTY."Kalan2", AMB."Dara" AS "AmbalajDarasi",
+                      TUR."Dara", DPO."DepoKod", RAF."RafKod", TUR."Sevkiyat", TUR."Bolunebilirlik", DTY."MalzemeId",
+                      DTY."Birim2Id", DTY."BirimId", TUR."Prefix", AMB."AmbalajTur" AS "AmbalajTurId",
+                      AMB."OID" AS "AmbalajId", AMB."Durum", DTY."OID" AS "AmbalajDetayId", AMB."IstasyonId", AMB."RafId",
+                      AMB."IsEmriId", AMB."IsEmriNo", AMB."IsEmriTipId", TUR."MalzemeTip", MLZ."MalzemeKod",
+                      MLZ."MalzemeAd",
+       NVL (AMB."OlusturmaTarihi", CURRENT_DATE) AS "OlusturmaTarihi", AMB."SevkEmriId", AMB."SevkEmriDetayId", DTY."ReferansId",
+                      DTY."TransferReferansId", DTY."TransferReferansDetayId", AMB."DepoId", AMB."UstAmbalaj",
+                      AMB."KaliteDurum", AMB."PartiNo", DTY."Birim2", IST."IstasyonKod", IST."IstasyonAd", RNK."RenkKod",
+                      AMB."CariId", CRI."CariKod", CRI."CariAd", RNK."Aciklama", AMB."BelgeNo", AMB."SiparisId", SIP."SiparisNo",
+                        DTY."Kalan" AS "rKalan",
+                          (SELECT COUNT (*)
+          FROM "Ambalajlar"
+         WHERE "UstAmbalaj" = AMB."OID")  AS "AmbalajSayisi", AMB."SonKullanmaTarihi", AMB."RenkId", TUR."ParcaliUretim",
+         NVL (IE."PlanlananMiktar", 0) AS "IsEmriMiktar",
+       NVL (AMB."SiraNo", 0) AS "SiraNo",
+       NVL (AMB."RafOmru", 0) AS "RafOmru",
+                          AMB."IrsaliyeNo", F_CIZIMNO_BUL(IE."IsEmriId") AS "CizimNo", AMB."OperasyonId", AMB."SDurum", AMB."DurumAciklama",
+                      AMB."SanalStok", AMB."OperasyonNo", AMB."OperasyonKod", AMB."UretimOperasyon",
+                      AMB."PaletNo", AMB."PaletSiraNo", AMB."KaynakModul", KUL."KullaniciKod",IE."OzelKod",
+(SELECT "Aciklama" FROM "UretimOperasyonlari" WHERE "UretimOperasyonlari"."Ambalaj" = AMB."OID" AND "UretimOperasyonlari"."Aciklama" IS NOT NULL AND ROWNUM = 1) AS "UretimAciklama"
+FROM
+"Ambalajlar" AMB LEFT OUTER JOIN "AmbalajDetaylari" DTY ON AMB."OID" = DTY."Ambalaj" LEFT OUTER JOIN
+"AmbalajTurleri" TUR ON AMB."AmbalajTur" = TUR."OID" LEFT OUTER JOIN
+"IsEmirleri" IE ON AMB."IsEmriId" = IE."IsEmriId" LEFT OUTER JOIN "Renkler" RNK ON IE."RenkId" = RNK."RenkId" LEFT OUTER JOIN
+"Siparisler" SIP ON AMB."SiparisId" = SIP."SiparisId" LEFT OUTER JOIN "Cariler" CRI ON AMB."CariId" = CRI."CariId" LEFT OUTER JOIN
+"Istasyonlar" IST ON AMB."IstasyonId" = IST."IstasyonId" LEFT OUTER JOIN "Malzemeler" MLZ ON DTY."MalzemeId" = MLZ."MalzemeId" LEFT OUTER JOIN
+"Depolar" DPO ON AMB."DepoId" = DPO."DepoId" LEFT OUTER JOIN "Raflar" RAF ON AMB."RafId" = RAF."RafId" LEFT OUTER JOIN
+"Birimler" BRM ON DTY."BirimId" = BRM."BirimId" LEFT OUTER JOIN "Kullanicilar" KUL ON AMB."Olusturan" = KUL."KullaniciId" 
+WHERE (AMB."Durum" != 4) AND (DTY."OID" IS NOT NULL);
+

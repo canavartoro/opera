@@ -1,0 +1,39 @@
+﻿
+
+ALTER VIEW [dbo].[V_AmbalajHareket]
+AS
+SELECT TOP (100) PERCENT
+	dbo.Ambalajlar.Barkod, 	
+	dbo.AmbalajDetaylari.Birim, 	 
+	dbo.AmbalajDetaylari.Birim2, 	
+	dbo.Malzemeler.MalzemeAd,
+	dbo.Malzemeler.MalzemeKod,
+	(SELECT DepoKod FROM Depolar WHERE DepoId = dbo.AmbalajHareketDetaylari.KaynakDepo) AS CikisDepo,
+	(SELECT RafKod FROM Raflar WHERE RafId = dbo.AmbalajHareketDetaylari.KaynakRaf) AS CikisRaf,
+	dbo.AmbalajHareketDetaylari.Miktar,
+	dbo.AmbalajHareketDetaylari.Miktar2,
+	(SELECT DepoKod FROM Depolar WHERE DepoId = dbo.AmbalajHareketDetaylari.HedefDepo) AS GirisDepo,
+	(SELECT RafKod FROM Raflar WHERE RafId = dbo.AmbalajHareketDetaylari.HedefRaf) AS GirisRaf,
+	dbo.AmbalajHareketDetaylari.KaynakModul,
+	dbo.AmbalajHareketDetaylari.Durum,
+	dbo.AmbalajHareketleri.HareketTip,
+	dbo.Ambalajlar.PartiNo,
+	dbo.AmbalajHareketleri.OlusturmaTarihi,
+	dbo.AmbalajHareketleri.OID AS HareketId,
+	dbo.AmbalajHareketDetaylari.OID,
+	dbo.Kullanicilar.KullaniciAd,
+	dbo.Kullanicilar.KullaniciKod
+FROM dbo.Ambalajlar
+LEFT OUTER JOIN dbo.AmbalajDetaylari ON dbo.Ambalajlar.OID = dbo.AmbalajDetaylari.Ambalaj
+LEFT OUTER JOIN dbo.Malzemeler ON dbo.AmbalajDetaylari.MalzemeId = dbo.Malzemeler.MalzemeId
+LEFT OUTER JOIN dbo.Raflar ON dbo.Ambalajlar.RafId = dbo.Raflar.RafId
+LEFT OUTER JOIN dbo.Depolar ON dbo.Raflar.DepoId = dbo.Depolar.DepoId 
+LEFT OUTER JOIN dbo.AmbalajHareketDetaylari ON dbo.Ambalajlar.OID = dbo.AmbalajHareketDetaylari.Ambalaj OR dbo.Ambalajlar.OID = dbo.AmbalajHareketDetaylari.KaynakAmbalaj
+LEFT OUTER JOIN dbo.AmbalajHareketleri ON dbo.AmbalajHareketDetaylari.AmbalajHareket = dbo.AmbalajHareketleri.OID
+LEFT OUTER JOIN dbo.Kullanicilar ON dbo.AmbalajHareketDetaylari.Olusturan = dbo.Kullanicilar.KullaniciId
+WHERE 
+	--dbo.Ambalajlar.Barkod = 'KSK0000677654' AND 
+	dbo.AmbalajHareketDetaylari.Durum <> 2
+ORDER BY dbo.AmbalajHareketleri.OID DESC
+
+

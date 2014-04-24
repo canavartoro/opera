@@ -1,0 +1,2 @@
+﻿CREATE VIEW [Barset].[V_Duruslar] AS
+SELECT Barset.fn_MikrobarKey(ARIZAKODU) AS DurusId, ARIZAKODU AS DurusKod, Barset.fn_Turkcelestir(ACIKLAMA) AS DurusAd, CASE WHEN SUREDAHIL = N'E' THEN 1 ELSE 0 END AS Planli, 1 AS IsEmriBaglanti FROM TBLUAKARIZASABIT WITH(NOLOCK)

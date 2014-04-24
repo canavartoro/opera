@@ -1,0 +1,3 @@
+﻿CREATE VIEW [Barset].[V_Personeller] AS
+SELECT INCKEYNO AS PersonelId, SICILNO AS PersonelKod, ISIM AS PersonelAd FROM MRPISCI WITH(NOLOCK) 
+GO

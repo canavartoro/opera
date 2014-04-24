@@ -1,0 +1,44 @@
+﻿IF N'#ErpTur#' = N'Progress' BEGIN
+
+CREATE PROC [dbo].[sp_SayimListe]
+(
+	@EMIRID NVARCHAR(10),
+	@DEPOKOD NVARCHAR(20)
+)
+AS
+--[dbo].[sp_SayimListe] '11', 'F06100'
+BEGIN
+
+DECLARE @MalzemeKod NVARCHAR(64), @FirmaKod NVARCHAR(30), @AktifPasif NVARCHAR(30),
+@IntVariable INTEGER, @SQLString NVARCHAR(500), @ParmDefinition NVARCHAR(500)
+SELECT @ParmDefinition = N'@aktifpasif NVARCHAR(10) OUTPUT, @deposay INTEGER OUTPUT', @FirmaKod = N'ARMA2011'
+DECLARE @DEPOTANIM TABLE (MalzemeKod NVARCHAR(64), Tanimli NVARCHAR(10), AktifPasif NVARCHAR(10), Durum BIT DEFAULT(0))
+INSERT INTO @DEPOTANIM
+SELECT SD.MalzemeKod, '' AS Tanimli, '' AS AktifPasif, 0 AS Durum FROM SayimDetaylari SD WITH (NOLOCK)
+INNER JOIN Ambalajlar AMB
+ON SD.AmbalajId = AMB.OID
+WHERE SD.SayimEmriId = @EMIRID AND SD.Durum <> 2
+GROUP BY SD.MalzemeKod
+
+WHILE (SELECT COUNT(*) FROM @DEPOTANIM WHERE Durum = 0) > 0 BEGIN
+	SELECT TOP 1 @MalzemeKod = MalzemeKod FROM @DEPOTANIM WHERE Durum = 0
+	
+	SET @SQLString = N'SELECT @aktifpasif = PASIF, @deposay = SAY FROM OPENQUERY(UYUMDB, '
+	SET @SQLString = @SQLString + N''' select s.aktif_pasif as PASIF, count(d.depo_kod) as SAY from pub.stok_kart s left outer join pub.depo_stok d ' 
+	SET @SQLString = @SQLString + ' on d.firma_kod = s.firma_kod and d.stok_kod = s.stok_kod and d.depo_kod = ''''' + @DEPOKOD + ''''' '
+	SET @SQLString = @SQLString + ' where s.firma_kod = ''''' + @FirmaKod + ''''' and s.stok_kod = ''''' + @MalzemeKod + ''''' group by s.aktif_pasif '') '
+
+	PRINT @SQLString	
+	--SET @SQLString = @SQLString + ''' select count(*) as SAY from pub.depo_stok where firma_kod = ''''' + @FirmaKod + ''''' and depo_kod = ''''' + @DEPOKOD + ''''' and stok_kod = ''''' + @MalzemeKod + ''''''') '
+	EXECUTE sp_executesql @SQLString, @ParmDefinition, @aktifpasif = @AktifPasif OUTPUT, @deposay = @IntVariable OUTPUT;
+	UPDATE @DEPOTANIM SET Durum = 1, Tanimli = CASE WHEN @IntVariable = 1 THEN N'Tanımlı' ELSE N'Değil' END, AktifPasif = @AktifPasif WHERE MalzemeKod = @MalzemeKod
+	
+END -- END WHILE
+
+SELECT SD.DepoKod, SD.RafKod, SD.MalzemeKod, SD.Barkod, AMB.PartiNo, SD.OkunanMiktar, DP.AktifPasif, DP.Tanimli FROM SayimDetaylari SD WITH (NOLOCK)
+INNER JOIN Ambalajlar AMB
+ON SD.AmbalajId = AMB.OID INNER JOIN @DEPOTANIM DP ON SD.MalzemeKod = DP.MalzemeKod
+WHERE SD.SayimEmriId = @EMIRID AND SD.DepoKod = @DEPOKOD AND SD.Durum <> 2
+END
+
+END

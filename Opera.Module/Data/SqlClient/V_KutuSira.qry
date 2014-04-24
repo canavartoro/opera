@@ -1,0 +1,21 @@
+CREATE VIEW [dbo].[V_KutuSira]
+AS
+SELECT     TOP (100) PERCENT A.Barkod, M.MalzemeKod, M.MalzemeAd, U.Birim, SUM(U.Miktar) AS Miktar2, SUM(U.Miktar) AS Miktar, SUM(D.Kalan) 
+                      AS Toplam2, SUM(D.Kalan) AS Toplam, MAX(U.BitisTarihi) AS Tarih, MAX(U.BitisTarihi) AS Tarih2, MAX(U.BitisTarihi) AS Zaman, ISNULL(A.PartiNo, '') 
+                      AS PartiNo, ISNULL(A.PaletSiraNo, 0) AS PaletSiraNo, ISNULL(C.CariKod, '') AS CariKod, ISNULL(C.CariAd, '') AS CariAd, ISNULL(L.MusteriKod, '') 
+                      AS MusteriKod, ISNULL(L.MusteriAd, '') AS MusteriAd, ISNULL(K.KullaniciKod, '') AS PersonelKod, ISNULL(K.KullaniciAd, '') AS PersonelAd, 
+                      ISNULL(U.EkAlan1, '999 KG') AS EkAlan1, ISNULL(U.EkAlan2, '999 KG') AS EkAlan2, ISNULL(U.EkAlan3, '999 KG') AS EkAlan3, ISNULL(U.EkAlan4, 
+                      '999 KG') AS EkAlan4, MIN(U.OID) AS UretimId, U.Ambalaj AS AmbalajId, ISNULL(C.CariId, 0) AS CariId, U.MalzemeId, U.KutuSiraNo
+FROM         dbo.Ambalajlar AS A WITH (NOLOCK) INNER JOIN
+                      dbo.UretimOperasyonlari AS U WITH (NOLOCK) ON A.OID = U.Ambalaj LEFT OUTER JOIN
+                      dbo.Malzemeler AS M WITH (NOLOCK) ON U.MalzemeId = M.MalzemeId LEFT OUTER JOIN
+                      dbo.AmbalajDetaylari AS D WITH (NOLOCK) ON A.OID = D.Ambalaj LEFT OUTER JOIN
+                      dbo.MusteriMalzemeleri AS L WITH (NOLOCK) ON U.MalzemeId = L.MalzemeId AND L.CariId = U.CariId LEFT OUTER JOIN
+                      dbo.Kullanicilar AS K WITH (NOLOCK) ON U.Olusturan = K.KullaniciId LEFT OUTER JOIN
+                      dbo.Cariler AS C WITH (NOLOCK) ON U.CariId = C.CariId
+GROUP BY C.CariId, U.Ambalaj, A.Barkod, U.MalzemeId, M.MalzemeKod, M.MalzemeAd, U.Birim, A.PartiNo, A.PaletSiraNo, C.CariKod, C.CariAd, L.MusteriKod, 
+                      L.MusteriAd, K.KullaniciKod, K.KullaniciAd, U.EkAlan1, U.EkAlan2, U.EkAlan3, U.EkAlan4, U.KutuSiraNo
+ORDER BY U.KutuSiraNo DESC
+
+
+GO

@@ -1,0 +1,34 @@
+.sch-event 
+{
+	border-radius:12px;
+	-moz-border-radius:12px;
+    -webkit-border-radius: 12px;
+    box-shadow:1px 1px 1px rgba(100, 100, 100, 0.2);
+    -moz-box-shadow:1px 1px 1px rgba(100, 100, 100, 0.2);
+    -webkit-box-shadow:1px 1px 3px rgba(150, 150, 150, 0.3);
+	background : #CDE6F3 url('images/bg.png') repeat-x;
+	border-color:#999A9C;
+	border-style:solid;
+	color:#1C417C;
+	cursor:pointer;
+    text-align : center;
+}
+
+.sch-event-inner
+{
+    -moz-border-radius:inherit;
+    -webkit-border-radius: inherit;
+}
+
+.sch-simpleeditor .x-form-text
+{
+    border-radius:inherit;
+    -moz-border-radius:inherit;
+    -webkit-border-radius: inherit;
+}
+
+
+div.sch-event-hover 
+{
+    border-color:#333;
+}

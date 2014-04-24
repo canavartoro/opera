@@ -1,0 +1,22 @@
+﻿CREATE OR REPLACE VIEW "ELTRM"."V_UretimQuery01" AS 
+  SELECT     "UretimOperasyonlari"."OID" AS "UretimId", "UretimOperasyonlari"."IsEmriId", "UretimOperasyonlari"."IsEmriNo", "UretimOperasyonlari"."IstasyonId", "UretimOperasyonlari"."IstasyonKod", 
+                      "UretimOperasyonlari"."MalzemeId", "UretimOperasyonlari"."OperasyonId", "UretimOperasyonlari"."OperasyonNo", "UretimOperasyonlari"."OperasyonKod", 
+                      "UretimOperasyonlari"."BirimId", "UretimOperasyonlari"."Birim", "UretimOperasyonlari"."Miktar", "UretimOperasyonlari"."NetMiktar", 
+                      "UretimOperasyonlari"."FireMiktari", F_URETILENMIKTAR("UretimOperasyonlari"."IsEmriId", "UretimOperasyonlari"."OperasyonId") AS "UretilenMiktar", 
+                      NVL("IsEmirleri"."PlanlananMiktar", 0) AS "PlanlananMiktar", "UretimOperasyonlari"."BaslangicTarihi", "UretimOperasyonlari"."BitisTarihi", 
+                      "UretimOperasyonlari"."UretimSuresi", "UretimOperasyonlari"."NetUretimSuresi", "UretimOperasyonlari"."KatSayi1", "UretimOperasyonlari"."KatSayi2", 
+                      "UretimOperasyonlari"."Aciklama", "UretimOperasyonlari"."Aciklama2","UretimOperasyonlari"."Aciklama3", "UretimOperasyonlari"."Aciklama4","UretimOperasyonlari"."Aciklama5", 
+					  "UretimOperasyonlari"."Durum" AS "UretimDurum", "Vardiyalar"."VardiyaId", 
+                      "Vardiyalar"."VardiyaKod", "Vardiyalar"."Aciklama" AS "VardiyaAciklama", "UretimOperasyonlari"."Ambalaj" AS "AmbalajId", "UretimOperasyonlari"."IsEmriDetayId", 
+                      "Malzemeler"."MalzemeKod", "Malzemeler"."MalzemeAd", "Operasyonlar"."OperasyonAd","Ambalajlar"."Barkod", NVL("Cariler"."CariKod", '') AS "CariKod", NVL("Cariler"."CariAd", '') AS "CariAd", 
+                      "Cariler"."CariId", "AmbalajDetaylari"."Kalan" AS "AmbalajMiktar", "UretimOperasyonlari"."EkAlan1" AS "EkAlan1", "UretimOperasyonlari"."EkAlan2" AS "EkAlan2", "UretimOperasyonlari"."EkAlan3" AS "EkAlan3", "UretimOperasyonlari"."EkAlan4" AS "EkAlan4",
+					  "UretimOperasyonlari"."TasarimGrupId"
+FROM         "UretimOperasyonlari" LEFT OUTER JOIN
+                      "Operasyonlar" ON "UretimOperasyonlari"."OperasyonId" = "Operasyonlar"."OperasyonId" LEFT OUTER JOIN
+                      "IsEmirleri" ON "UretimOperasyonlari"."IsEmriId" = "IsEmirleri"."IsEmriId" LEFT OUTER JOIN
+                      "Malzemeler" ON "UretimOperasyonlari"."MalzemeId" = "Malzemeler"."MalzemeId" LEFT OUTER JOIN
+                      "Vardiyalar" ON "UretimOperasyonlari"."Vardiya" = "Vardiyalar"."VardiyaId" LEFT OUTER JOIN
+                      "Ambalajlar" ON "UretimOperasyonlari"."Ambalaj" = "Ambalajlar"."OID" LEFT OUTER JOIN
+                      "Cariler" ON "UretimOperasyonlari"."CariId" = "Cariler"."CariId" LEFT OUTER JOIN
+"AmbalajDetaylari" ON "Ambalajlar"."OID" = "AmbalajDetaylari"."Ambalaj"
+WHERE     ("UretimOperasyonlari"."Durum" = 0) ORDER BY "UretimOperasyonlari"."OID" DESC

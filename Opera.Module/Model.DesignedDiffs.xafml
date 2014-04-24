@@ -1,0 +1,435 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application Title="Mikrobar - Uretim veri toplama!" Subtitle="Basrset Bilgi Sistemleri" Company="BARSET" Logo="ExpressAppLogo" WebSite="http://www.barset.com.tr" Copyright="Copyright (C) 2011 {0:Company} ALL RIGHTS RESERVED" PreferredLanguage="(Default language)">
+  <ActionDesign>
+    <Actions>
+      <Action Id="ClearFieldsAction" SelectionDependencyType="RequireSingleObject" ConfirmationMessage="Are you sure you want to clear all the fields?" ToolTip="Clear the current object's fields" Shortcut="Control+Shift+C" />
+      <Action Id="SaveAndClose" ValidationContexts="SaveAndClose" />
+    </Actions>
+    <ActionToContainerMapping>
+      <ActionContainer Id="RecordEdit">
+        <ActionLink ActionId="ClearFieldsAction" IsNewNode="True" />
+      </ActionContainer>
+      <ActionContainer Id="Unspecified">
+        <ActionLink ActionId="ClearFieldsAction" Removed="True" />
+      </ActionContainer>
+    </ActionToContainerMapping>
+  </ActionDesign>
+  <BOModel>
+    <Class Name="DevExpress.Persistent.BaseImpl.BasicUser" Caption="Basic User" />
+    <Class Name="DevExpress.Persistent.BaseImpl.SimpleUser" Caption="Simple User" />
+    <Class Name="DevExpress.Persistent.BaseImpl.Task" Caption="Base Task">
+      <OwnMembers>
+        <Member Name="Subject" Size="200" RowCount="2" />
+      </OwnMembers>
+    </Class>
+    <Class Name="Mikrobar.Module.BusinessObjects.Contact" ObjectCaptionFormat="{0:FullName} from the {0:Department}" ImageName="BO_Employee" DefaultListView="Contact_ListView_Varied">
+      <OwnMembers>
+        <Member Name="Position" DataSourceProperty="Department.Positions" DataSourcePropertyIsNullMode="SelectAll" />
+      </OwnMembers>
+    </Class>
+    <Class Name="Mikrobar.Module.BusinessObjects.Department" ImageName="BO_Department" />
+    <Class Name="Mikrobar.Module.BusinessObjects.Payment" ImageName="BO_SaleItem">
+      <OwnMembers>
+        <Member Name="Hours" ImmediatePostData="True" />
+        <Member Name="Rate" ImmediatePostData="True" />
+      </OwnMembers>
+    </Class>
+    <Class Name="Mikrobar.Module.BusinessObjects.Position" ImageName="BO_Position" />
+    <Class Name="Mikrobar.Module.BusinessObjects.UretimMalzemeleri" DefaultListViewImage="BO_Organization" />
+  </BOModel>
+  <CreatableItems>
+    <CreatableItem ClassName="DevExpress.Persistent.BaseImpl.Event" Caption="Scheduler Event" IsNewNode="True" />
+    <CreatableItem ClassName="DevExpress.Persistent.BaseImpl.Note" IsNewNode="True" />
+  </CreatableItems>
+  <NavigationItems GenerateRelatedViewVariantsGroup="True" GenerateRelatedReportsGroup="True" GenerateRelatedAnalysisGroup="True" StartupNavigationItem="Mikrobar.Module.BusinessObjects.Contact_ListView">
+    <Items>
+      <Item Id="Default" ChildItemsDisplayStyle="List" Index="0">
+        <Items>
+          <Item Id="Mikrobar.Module.BusinessObjects.Contact_ListView" ViewId="Contact_ListView_Varied" />
+          <Item Id="Note" ViewId="DevExpress.Persistent.BaseImpl.Note_ListView" IsNewNode="True" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+  <Options>
+    <Dashboards EnableModelDefaultization="False" />
+  </Options>
+  <SchemaModules IsNewNode="True">
+    <SchemaModule Name="DevExpress.ExpressApp.SystemModule.HideActionsViewController" Version="7.3.6.4097" IsNewNode="True" />
+    <SchemaModule Name="DevExpress.ExpressApp.SystemModule.ShowNavigationItemController" Version="7.3.6.4097" IsNewNode="True" />
+    <SchemaModule Name="SystemModule" Version="13.1.5.0" IsNewNode="True" />
+    <SchemaModule Name="ValidationModule" Version="13.1.5.0" IsNewNode="True" />
+    <SchemaModule Name="ViewVariantsModule" Version="13.1.5.0" IsNewNode="True" />
+  </SchemaModules>
+  <Validation>
+    <Rules>
+      <RuleCriteria Id="TaskIsNotStarted" Criteria="Status != 'NotStarted'" TargetContextIDs="MarkCompleted" ModelDefaultMessageTemplate="Cannot set the task completed because it's not started." TargetType="DevExpress.Persistent.BaseImpl.Task" IsNewNode="True" />
+    </Rules>
+  </Validation>
+  <Views>
+    <ListView Id="Contact_ListView_AllColumns" ClassName="Mikrobar.Module.BusinessObjects.Contact" IsGroupPanelVisible="False" IsFooterVisible="True" AllowEdit="False" IsNewNode="True">
+      <Columns IsNewNode="True">
+        <ColumnInfo Id="Address1" PropertyName="Address1" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Address2" PropertyName="Address2" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Birthday" PropertyName="Birthday" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="DisplayName" PropertyName="DisplayName" Index="-1" Width="400" IsNewNode="True" />
+        <ColumnInfo Id="Email" PropertyName="Email" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="FirstName" PropertyName="FirstName" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="FullName" PropertyName="FullName" Index="-1" IsNewNode="True" />
+        <ColumnInfo Id="MiddleName" PropertyName="MiddleName" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Notes" PropertyName="Notes" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Photo" PropertyName="Photo" Index="-1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="LastName" PropertyName="LastName" Index="0" SortIndex="0" SortOrder="Ascending" Width="100" IsNewNode="True" />
+        <ColumnInfo Id="WebPageAddress" PropertyName="WebPageAddress" Index="1" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Manager" PropertyName="Manager" Index="2" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="NickName" PropertyName="NickName" Index="3" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="SpouseName" PropertyName="SpouseName" Index="4" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="TitleOfCourtesy" PropertyName="TitleOfCourtesy" Index="5" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Anniversary" PropertyName="Anniversary" Index="6" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Department" PropertyName="Department" Index="7" Width="70" IsNewNode="True" />
+        <ColumnInfo Id="Position" PropertyName="Position" Index="8" Width="70" IsNewNode="True" />
+      </Columns>
+    </ListView>
+    <ListView Id="Contact_ListView_Varied" ClassName="Mikrobar.Module.BusinessObjects.Contact" IsNewNode="True">
+      <Variants IsNewNode="True">
+        <Variant Id="Default" Caption="Few columns" ViewID="Mikrobar.Module.BusinessObjects.Contact_ListView" Index="1" IsNewNode="True" />
+        <Variant Id="All columns" Caption="All columns" ViewID="Contact_ListView_AllColumns" Index="2" IsNewNode="True" />
+      </Variants>
+    </ListView>
+    <DetailView Id="DevExpress.ExpressApp.Security.AuthenticationStandardLogonParameters_DetailView">
+      <Items>
+        <StaticText Id="PasswordHint" Text="(By default, built-in users have empty passwords)" IsNewNode="True" />
+      </Items>
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="RootGroup">
+            <LayoutGroup Id="EditorsGroup">
+              <LayoutGroup Id="Editors">
+                <LayoutItem Id="PasswordHint" Index="3" ViewItem="PasswordHint" IsNewNode="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="DevExpress.Persistent.BaseImpl.User_ListView" MasterDetailMode="ListViewAndDetailView" MasterDetailView="User_MasterDetailView">
+      <Columns>
+        <ColumnInfo Id="FullName" PropertyName="FullName" Index="-1" SortIndex="-1" SortOrder="None" />
+        <ColumnInfo Id="UserName" PropertyName="UserName" Index="0" SortIndex="0" SortOrder="Ascending" Width="70" />
+      </Columns>
+      <SplitLayout SplitterPosition="250" />
+    </ListView>
+    <DetailView Id="Mikrobar.Module.BusinessObjects.AnotherTable_DetailView" Caption="Kayıt Bilgisi" EnableCaptionColon="False" />
+    <DetailView Id="Mikrobar.Module.BusinessObjects.Contact_DetailView">
+      <Items>
+        <PropertyEditor Id="Department.Office" PropertyName="Department.Office" IsNewNode="True" />
+      </Items>
+      <Layout>
+        <LayoutGroup Id="Main" RelativeSize="98">
+          <LayoutGroup Id="SimpleEditors" RelativeSize="57">
+            <LayoutGroup Id="Contact" RelativeSize="38">
+              <LayoutGroup Id="Contact_col1" RelativeSize="48">
+                <LayoutItem Id="TitleOfCourtesy" Index="1" RelativeSize="19" ViewItem="TitleOfCourtesy" IsNewNode="True" />
+                <LayoutItem Id="NickName" RelativeSize="19" ViewItem="NickName" />
+                <LayoutItem Id="SpouseName" Index="2" RelativeSize="19" ViewItem="SpouseName" />
+                <LayoutItem Id="Anniversary" Index="3" RelativeSize="19" ViewItem="Anniversary" IsNewNode="True" />
+                <LayoutItem Id="WebPageAddress" Index="4" RelativeSize="19" ViewItem="WebPageAddress" />
+                <LayoutItem Id="Manager" ViewItem="Manager" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Contact_col2" RelativeSize="50">
+                <LayoutItem Id="Department.Office" Index="1" ViewItem="Department.Office" IsNewNode="True" />
+                <LayoutItem Id="Department" RelativeSize="19" ViewItem="Department" />
+                <LayoutItem Id="Position" Index="2" RelativeSize="19" ViewItem="Position" />
+                <LayoutItem Id="Manager" Index="3" RelativeSize="38" ViewItem="Manager" IsNewNode="True" />
+                <LayoutItem Id="Anniversary" ViewItem="Anniversary" Removed="True" />
+                <LayoutItem Id="TitleOfCourtesy" ViewItem="TitleOfCourtesy" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutGroup Id="Person" RelativeSize="59">
+              <LayoutGroup Id="Person_col1" RelativeSize="61">
+                <LayoutItem Id="FirstName" Index="0" RelativeSize="10" ViewItem="FirstName" />
+                <LayoutItem Id="MiddleName" Index="1" RelativeSize="10" ViewItem="MiddleName" />
+                <LayoutItem Id="LastName" Index="2" RelativeSize="10" ViewItem="LastName" />
+                <LayoutItem Id="FullName" Index="3" RelativeSize="10" ViewItem="FullName" IsNewNode="True" />
+                <LayoutItem Id="Email" Index="4" RelativeSize="11" ViewItem="Email" IsNewNode="True" />
+                <LayoutItem Id="Birthday" Index="5" RelativeSize="10" ViewItem="Birthday" IsNewNode="True" />
+                <LayoutItem Id="Address1" Index="6" RelativeSize="10" ViewItem="Address1" IsNewNode="True" />
+                <LayoutItem Id="Address2" Index="7" RelativeSize="10" ViewItem="Address2" IsNewNode="True" />
+                <LayoutItem Id="DisplayName" Index="8" RelativeSize="10" ViewItem="DisplayName" IsNewNode="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="Person_col2" RelativeSize="38">
+                <LayoutItem Id="Photo" Index="0" RelativeSize="97" ViewItem="Photo" IsNewNode="True" />
+                <LayoutItem Id="Birthday" ViewItem="Birthday" Removed="True" />
+                <LayoutItem Id="Email" ViewItem="Email" Removed="True" />
+                <LayoutItem Id="FullName" ViewItem="FullName" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+            <LayoutGroup Id="Party" Removed="True" />
+          </LayoutGroup>
+          <LayoutGroup Id="SizeableEditors" RelativeSize="8">
+            <LayoutItem Id="Notes" RelativeSize="76" ViewItem="Notes" />
+          </LayoutGroup>
+          <TabbedGroup Id="Tabs" RelativeSize="33">
+            <LayoutGroup Id="Tasks" Direction="Vertical" RelativeSize="100" Index="0">
+              <LayoutItem Id="Tasks" RelativeSize="100" ViewItem="Tasks" />
+            </LayoutGroup>
+            <LayoutGroup Id="ChangeHistory" Direction="Vertical" RelativeSize="100" Index="1">
+              <LayoutItem Id="ChangeHistory" RelativeSize="100" ViewItem="ChangeHistory" />
+            </LayoutGroup>
+            <LayoutGroup Id="PhoneNumbers" Direction="Vertical" RelativeSize="100" Index="2">
+              <LayoutItem Id="PhoneNumbers" RelativeSize="100" ViewItem="PhoneNumbers" />
+            </LayoutGroup>
+          </TabbedGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Mikrobar.Module.BusinessObjects.Contact_ListView" IsGroupPanelVisible="True">
+      <Columns>
+        <ColumnInfo Id="Anniversary" PropertyName="Anniversary" Index="-1" />
+        <ColumnInfo Id="FullName" PropertyName="FullName" Index="-1" SortIndex="-1" SortOrder="None" />
+        <ColumnInfo Id="Manager" PropertyName="Manager" Index="-1" />
+        <ColumnInfo Id="NickName" PropertyName="NickName" Index="-1" />
+        <ColumnInfo Id="SpouseName" PropertyName="SpouseName" Index="-1" />
+        <ColumnInfo Id="TitleOfCourtesy" PropertyName="TitleOfCourtesy" Index="-1" />
+        <ColumnInfo Id="WebPageAddress" PropertyName="WebPageAddress" Index="-1" />
+        <ColumnInfo Id="LastName" PropertyName="LastName" Index="0" SortIndex="0" SortOrder="Ascending" Width="100" />
+        <ColumnInfo Id="Position" PropertyName="Position" Index="1" />
+        <ColumnInfo Id="Department" PropertyName="Department" Index="2" GroupIndex="0" />
+        <ColumnInfo Id="Email" PropertyName="Email" Index="3" />
+      </Columns>
+      <Filters CurrentFilterId="AllContacts" IsNewNode="True">
+        <Filter Id="AllContacts" Caption="All Contacts" IsNewNode="True" />
+        <Filter Id="Developers" Criteria="Position.Title = 'Developer'" IsNewNode="True" />
+        <Filter Id="Development Department Contacts" Caption="Development Department Contacts" Criteria="[Department.Title] = 'Development Department' " IsNewNode="True" />
+      </Filters>
+    </ListView>
+    <ListView Id="Mikrobar.Module.BusinessObjects.Contact_LookupListView">
+      <Columns>
+        <ColumnInfo Id="FullName" PropertyName="FullName" Index="-1" SortOrder="None" />
+        <ColumnInfo Id="LastName" PropertyName="LastName" Index="0" SortOrder="Ascending" IsNewNode="True" />
+      </Columns>
+    </ListView>
+    <ListView Id="Mikrobar.Module.BusinessObjects.Contact_Tasks_ListView" AllowEdit="True" NewItemRowPosition="Top" />
+    <ListView Id="Mikrobar.Module.BusinessObjects.DemoTask_ListView" AllowEdit="True" NewItemRowPosition="Top" PreviewColumnName="Description">
+      <Columns>
+        <ColumnInfo Id="Status" PropertyName="Status" Index="2" />
+      </Columns>
+    </ListView>
+    <ListView Id="Mikrobar.Module.BusinessObjects.Department_ListView" MasterDetailMode="ListViewAndDetailView" />
+    <DetailView Id="Mikrobar.Module.BusinessObjects.UretimAletleri_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="UretimAletleri">
+              <LayoutGroup Id="UretimAletleri_col1">
+                <LayoutItem Id="Alet" Index="0" ViewItem="Alet" />
+                <LayoutItem Id="AletAciklama" Index="1" ViewItem="AletAciklama" />
+                <LayoutItem Id="OlusturanKullanici" Index="3" ViewItem="OlusturanKullanici" />
+                <LayoutItem Id="OlusturmaTarihi" Index="4" ViewItem="OlusturmaTarihi" />
+                <LayoutItem Id="GuncelleyenKullanici" Index="7" ViewItem="GuncelleyenKullanici" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="UretimAletleri_col2">
+                <LayoutItem Id="Durum" Index="0" ViewItem="Durum" />
+                <LayoutItem Id="GuncelleyenKullanici" Index="1" ViewItem="GuncelleyenKullanici" IsNewNode="True" />
+                <LayoutItem Id="GuncellemeTarihi" Index="2" ViewItem="GuncellemeTarihi" />
+                <LayoutItem Id="Entegre" Index="5" ViewItem="Entegre" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <DetailView Id="Mikrobar.Module.BusinessObjects.UretimDuruslari_DetailView">
+      <Items>
+        <PropertyEditor Id="Aciklama" RowCount="3" />
+      </Items>
+      <Layout>
+        <LayoutGroup Id="Main" ImageName="" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="100">
+          <LayoutGroup Id="SimpleEditors" ImageName="" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="100">
+            <LayoutGroup Id="UretimDuruslari" Caption="Uretim Duruslari" ImageName="" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="100">
+              <LayoutGroup Id="UretimDuruslari_col1" ImageName="" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="48">
+                <LayoutItem Id="Durus" Index="0" RelativeSize="6" ViewItem="Durus" />
+                <LayoutItem Id="BaslangicTarihi" Index="1" RelativeSize="5" ViewItem="BaslangicTarihi" />
+                <LayoutItem Id="BitisTarihi" Index="2" RelativeSize="5" ViewItem="BitisTarihi" />
+                <LayoutItem Id="Aciklama" Index="3" RelativeSize="5" ViewItem="Aciklama" />
+                <LayoutItem Id="Istasyon" Index="4" RelativeSize="5" ViewItem="Istasyon" />
+                <LayoutItem Id="SiraNo" Index="5" RelativeSize="5" ViewItem="SiraNo" />
+                <LayoutItem Id="DurusSuresi" Index="6" RelativeSize="67" ViewItem="DurusSuresi" />
+              </LayoutGroup>
+              <LayoutGroup Id="UretimDuruslari_col2" ImageName="" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="48">
+                <LayoutItem Id="OlusturanKullanici" Index="0" RelativeSize="5" ViewItem="OlusturanKullanici" IsNewNode="True" />
+                <LayoutItem Id="OlusturmaTarihi" Index="0" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="6" ViewItem="OlusturmaTarihi" />
+                <LayoutItem Id="GuncelleyenKullanici" Index="1" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="5" ViewItem="GuncelleyenKullanici" />
+                <LayoutItem Id="GuncellemeTarihi" Index="2" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="5" ViewItem="GuncellemeTarihi" />
+                <LayoutItem Id="KaynakProgram" Index="3" RelativeSize="5" ViewItem="KaynakProgram" />
+                <LayoutItem Id="KaynakModul" Index="4" RelativeSize="5" ViewItem="KaynakModul" />
+                <LayoutItem Id="Entegre" Index="5" RelativeSize="5" ViewItem="Entegre" />
+                <LayoutItem Id="Durum" Index="7" RelativeSize="62" ViewItem="Durum" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <DetailView Id="Mikrobar.Module.BusinessObjects.UretimHurdalari_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="UretimHurdalari">
+              <LayoutGroup Id="UretimHurdalari_col1">
+                <LayoutItem Id="HurdaTipi" Index="0" ViewItem="HurdaTipi" />
+                <LayoutItem Id="HurdaNedeni" Index="1" ViewItem="HurdaNedeni" />
+                <LayoutItem Id="HurdaNedenAciklama" Index="2" ViewItem="HurdaNedenAciklama" />
+                <LayoutItem Id="Malzeme" Index="3" ViewItem="Malzeme" />
+                <LayoutItem Id="MalzemeAd" Index="4" ViewItem="MalzemeAd" />
+                <LayoutItem Id="Birim" Index="5" ViewItem="Birim" />
+                <LayoutItem Id="Miktar" Index="6" ViewItem="Miktar" />
+                <LayoutItem Id="Depo" Index="7" ViewItem="Depo" />
+                <LayoutItem Id="KaynakAmbalaj" Index="8" ViewItem="KaynakAmbalaj" />
+                <LayoutItem Id="KaynakAmbalajDurum" Index="9" ViewItem="KaynakAmbalajDurum" />
+                <LayoutItem Id="Aciklama1" ViewItem="Aciklama1" Index="10" IsNewNode="True" />
+                <LayoutItem Id="Ambalaj" Index="10" ViewItem="Ambalaj" Removed="True" />
+              </LayoutGroup>
+              <LayoutGroup Id="UretimHurdalari_col2">
+                <LayoutItem Id="Ambalaj" Index="0" ViewItem="Ambalaj" IsNewNode="True" />
+                <LayoutItem Id="AmbalajDurum" Index="1" ViewItem="AmbalajDurum" />
+                <LayoutItem Id="KaynakProgram" Index="2" ViewItem="KaynakProgram" />
+                <LayoutItem Id="Durum" Index="4" ViewItem="Durum" />
+                <LayoutItem Id="OlusturanKullanici" Index="5" ViewItem="OlusturanKullanici" />
+                <LayoutItem Id="OlusturmaTarihi" Index="6" ViewItem="OlusturmaTarihi" />
+                <LayoutItem Id="GuncelleyenKullanici" Index="7" ViewItem="GuncelleyenKullanici" />
+                <LayoutItem Id="GuncellemeTarihi" Index="8" ViewItem="GuncellemeTarihi" />
+                <LayoutItem Id="KaynakModul" Index="8" ViewItem="KaynakModul" />
+                <LayoutItem Id="Entegre" Index="10" ViewItem="Entegre" />
+                <LayoutItem Id="Aciklama1" ViewItem="Aciklama1" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <DetailView Id="Mikrobar.Module.BusinessObjects.UretimIscilikleri_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="UretimIscilikleri">
+              <LayoutGroup Id="UretimIscilikleri_col1">
+                <LayoutItem Id="Personel" Index="0" ViewItem="Personel" />
+                <LayoutItem Id="PersonelIsim" Index="1" ViewItem="PersonelIsim" />
+                <LayoutItem Id="BaslangicTarihi" Index="2" ViewItem="BaslangicTarihi" />
+                <LayoutItem Id="BitisTarihi" Index="3" ViewItem="BitisTarihi" />
+                <LayoutItem Id="OlusturmaTarihi" Index="4" ViewItem="OlusturmaTarihi" />
+                <LayoutItem Id="OlusturanKullanici" Index="5" ViewItem="OlusturanKullanici" />
+              </LayoutGroup>
+              <LayoutGroup Id="UretimIscilikleri_col2">
+                <LayoutItem Id="KaynakProgram" Index="0" ViewItem="KaynakProgram" />
+                <LayoutItem Id="KaynakModul" Index="1" ViewItem="KaynakModul" />
+                <LayoutItem Id="GuncelleyenKullanici" Index="2" ViewItem="GuncelleyenKullanici" />
+                <LayoutItem Id="GuncellemeTarihi" Index="3" ViewItem="GuncellemeTarihi" />
+                <LayoutItem Id="Entegre" Index="4" ViewItem="Entegre" />
+                <LayoutItem Id="Durum" Index="5" ViewItem="Durum" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <DetailView Id="Mikrobar.Module.BusinessObjects.UretimMalzemeleri_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main">
+          <LayoutGroup Id="SimpleEditors">
+            <LayoutGroup Id="UretimMalzemeleri">
+              <LayoutGroup Id="UretimMalzemeleri_col1">
+                <LayoutItem Id="HammaddeTakip" Index="0" ViewItem="HammaddeTakip" />
+                <LayoutItem Id="Ambalaj" Index="1" ViewItem="Ambalaj" />
+                <LayoutItem Id="AmbalajDurum" ViewItem="AmbalajDurum" Index="2" IsNewNode="True" />
+                <LayoutItem Id="ReceteMalzeme" Index="3" ViewItem="ReceteMalzeme" />
+                <LayoutItem Id="ReceteMalzemeAd" Index="4" ViewItem="ReceteMalzemeAd" />
+                <LayoutItem Id="Birim" Index="5" ViewItem="Birim" />
+                <LayoutItem Id="BirimMiktar" Index="6" ViewItem="BirimMiktar" />
+                <LayoutItem Id="KullanilanMiktar" Index="7" ViewItem="KullanilanMiktar" />
+                <LayoutItem Id="Miktar" Index="8" ViewItem="Miktar" />
+                <LayoutItem Id="Malzeme" Index="9" ViewItem="Malzeme" />
+                <LayoutItem Id="MalzemeAd" Index="10" ViewItem="MalzemeAd" />
+              </LayoutGroup>
+              <LayoutGroup Id="UretimMalzemeleri_col2">
+                <LayoutItem Id="OlusturanKullanici" Index="1" ViewItem="OlusturanKullanici" />
+                <LayoutItem Id="OlusturmaTarihi" Index="2" ViewItem="OlusturmaTarihi" />
+                <LayoutItem Id="KaynakProgram" Index="3" ViewItem="KaynakProgram" />
+                <LayoutItem Id="GuncelleyenKullanici" Index="4" ViewItem="GuncelleyenKullanici" />
+                <LayoutItem Id="GuncellemeTarihi" Index="5" ViewItem="GuncellemeTarihi" />
+                <LayoutItem Id="Entegre" Index="11" ViewItem="Entegre" />
+                <LayoutItem Id="AmbalajDurum" ViewItem="AmbalajDurum" Removed="True" />
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <ListView Id="Mikrobar.Module.BusinessObjects.UretimOperasyonlari_Ambalajlar_ListView" Criteria="[Durum] &lt;&gt; ##Enum#Mikrobar.Module.BusinessObjects.AmbalajDurumu,Kapali#" AllowEdit="True" MasterDetailMode="ListViewAndDetailView" UseServerMode="True">
+      <Sorting>
+        <SortProperty Id="AmbalajOIDAscending" PropertyName="OID" IsNewNode="True" />
+      </Sorting>
+    </ListView>
+    <ListView Id="Mikrobar.Module.BusinessObjects.UretimOperasyonlari_Iscilikler_ListView">
+      <Columns>
+        <ColumnInfo Id="BaslangicTarihi" PropertyEditorType="Mikrobar.Module.BusinessObjects.ASPxTimePropertyEditor" />
+        <ColumnInfo Id="BitisTarihi" PropertyEditorType="Mikrobar.Module.BusinessObjects.ASPxTimePropertyEditor" />
+      </Columns>
+    </ListView>
+    <DashboardView Id="StandardFormWithModelDefaultUserControl" ImageName="BO_Attention" Caption="Standard Form With ModelDefault User Control" IsNewNode="True">
+      <Items IsNewNode="True">
+        <ModelDefaultUserControlViewItem Id="ModelDefaultUserControlViewItem" IsNewNode="True" />
+      </Items>
+      <Layout IsNewNode="True">
+        <LayoutGroup Id="Main" ShowCaption="False" Index="0" RelativeSize="100" IsNewNode="True">
+          <LayoutItem Id="ModelDefaultUserControlViewItem" ViewItem="ModelDefaultUserControlViewItem" Index="0" RelativeSize="100" ShowCaption="False" IsNewNode="True" />
+        </LayoutGroup>
+      </Layout>
+    </DashboardView>
+    <DetailView Id="User_MasterDetailView" ClassName="DevExpress.Persistent.BaseImpl.User" IsNewNode="True">
+      <Items IsNewNode="True">
+        <PropertyEditor Id="Address1" PropertyName="Address1" IsNewNode="True" />
+        <PropertyEditor Id="Address2" PropertyName="Address2" IsNewNode="True" />
+        <PropertyEditor Id="Birthday" PropertyName="Birthday" IsNewNode="True" />
+        <PropertyEditor Id="ChangePasswordOnFirstLogon" PropertyName="ChangePasswordOnFirstLogon" IsNewNode="True" />
+        <PropertyEditor Id="Email" PropertyName="Email" IsNewNode="True" />
+        <PropertyEditor Id="FirstName" PropertyName="FirstName" IsNewNode="True" />
+        <PropertyEditor Id="FullName" PropertyName="FullName" IsNewNode="True" />
+        <PropertyEditor Id="IsActive" PropertyName="IsActive" IsNewNode="True" />
+        <PropertyEditor Id="LastName" PropertyName="LastName" IsNewNode="True" />
+        <PropertyEditor Id="MiddleName" PropertyName="MiddleName" IsNewNode="True" />
+        <PropertyEditor Id="Photo" PropertyName="Photo" IsNewNode="True" />
+        <PropertyEditor Id="UserName" PropertyName="UserName" IsNewNode="True" />
+      </Items>
+      <Layout IsNewNode="True">
+        <LayoutGroup Id="Item1" ShowCaption="False" Caption="Main" ImageName="" CaptionLocation="Top" Direction="Vertical" Index="0" RelativeSize="100" IsNewNode="True">
+          <LayoutGroup Id="Item2" ShowCaption="True" Caption="Security" CaptionLocation="Top" Direction="Vertical" Index="0" RelativeSize="10" IsNewNode="True">
+            <LayoutItem Id="UserName" ViewItem="UserName" Index="0" RelativeSize="34" IsNewNode="True" />
+            <LayoutGroup Id="Group1" ShowCaption="False" Caption="" Direction="Horizontal" Index="1" RelativeSize="30" IsNewNode="True">
+              <LayoutItem Id="IsActive" ViewItem="IsActive" Index="0" RelativeSize="50" IsNewNode="True" />
+              <LayoutItem Id="ChangePasswordOnFirstLogon" ShowCaption="False" ViewItem="ChangePasswordOnFirstLogon" Index="1" RelativeSize="50" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+          <LayoutGroup Id="Person" ShowCaption="True" Caption="Basic" ImageName="" Direction="Vertical" Index="1" RelativeSize="20" IsNewNode="True">
+            <LayoutItem Id="FullName" ViewItem="FullName" Index="0" RelativeSize="17" IsNewNode="True" />
+            <LayoutItem Id="Email" ViewItem="Email" Index="1" RelativeSize="13" IsNewNode="True" />
+            <LayoutItem Id="FirstName" ViewItem="FirstName" Index="2" RelativeSize="13" IsNewNode="True" />
+            <LayoutItem Id="LastName" ViewItem="LastName" Index="3" RelativeSize="13" IsNewNode="True" />
+            <LayoutItem Id="MiddleName" ViewItem="MiddleName" Index="4" RelativeSize="13" IsNewNode="True" />
+            <LayoutItem Id="Birthday" ViewItem="Birthday" Index="5" RelativeSize="17" IsNewNode="True" />
+          </LayoutGroup>
+          <LayoutGroup Id="Group2" ShowCaption="False" Caption="" Direction="Horizontal" Index="2" RelativeSize="68" ImageName="" IsNewNode="True">
+            <LayoutGroup Id="Item2" ShowCaption="True" Caption="Address" ImageName="" CaptionLocation="Top" Direction="Vertical" Index="0" RelativeSize="51" IsNewNode="True">
+              <LayoutItem Id="Address1" ViewItem="Address1" Index="0" RelativeSize="5" IsNewNode="True" />
+              <LayoutItem Id="Address2" ViewItem="Address2" Index="1" RelativeSize="88" IsNewNode="True" />
+            </LayoutGroup>
+            <LayoutGroup Id="Item3" ShowCaption="True" Caption="Photo" ImageName="" CaptionLocation="Top" Direction="Vertical" Index="2" RelativeSize="48" IsNewNode="True">
+              <LayoutItem Id="Photo" ShowCaption="False" ViewItem="Photo" Index="0" RelativeSize="93" IsNewNode="True" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+  </Views>
+</Application>

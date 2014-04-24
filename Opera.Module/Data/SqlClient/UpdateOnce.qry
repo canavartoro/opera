@@ -1,0 +1,1 @@
+﻿create function dbo.once() returns nvarchar(30) as begin return N'update oncesi' end

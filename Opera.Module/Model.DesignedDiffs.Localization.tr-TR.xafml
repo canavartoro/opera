@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <Views>
+    <DetailView Id="Mikrobar.Module.BusinessObjects.AnotherTable_DetailView" Caption="Kayıt Bilgisi" />
+    <DetailView Id="Mikrobar.Module.BusinessObjects.UretimDuruslari_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main" Caption="Main">
+          <LayoutGroup Id="SimpleEditors" Caption="SimpleEditors">
+            <LayoutGroup Id="UretimDuruslari" Caption="Uretim Duruslari">
+              <LayoutGroup Id="UretimDuruslari_col1" Caption="UretimDuruslari_col1" />
+              <LayoutGroup Id="UretimDuruslari_col2" Caption="UretimDuruslari_col2" />
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+    <DetailView Id="Mikrobar.Module.BusinessObjects.UretimOperasyonlari_DetailView">
+      <Layout>
+        <LayoutGroup Id="Main" Caption="Main">
+          <LayoutGroup Id="SimpleEditors" Caption="SimpleEditors">
+            <LayoutGroup Id="UretimOperasyonlari" Caption="Uretim Operasyonlari">
+              <LayoutGroup Id="UretimOperasyonlari_col1" Caption="UretimOperasyonlari_col1" />
+              <LayoutGroup Id="UretimOperasyonlari_col2" Caption="UretimOperasyonlari_col2" />
+            </LayoutGroup>
+          </LayoutGroup>
+          <TabbedGroup Id="Tabs">
+            <LayoutGroup Id="Iscilikler" Caption="Iscilikler" />
+            <LayoutGroup Id="Hurdalar" Caption="Hurdalar" />
+            <LayoutGroup Id="Duruslar" Caption="Duruslar" />
+            <LayoutGroup Id="Malzemeler" Caption="Malzemeler" />
+            <LayoutGroup Id="Aletler" Caption="Aletler" />
+            <LayoutGroup Id="Ambalajlar" Caption="Ambalajlar" />
+          </TabbedGroup>
+        </LayoutGroup>
+      </Layout>
+    </DetailView>
+  </Views>
+</Application>

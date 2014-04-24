@@ -1,0 +1,14 @@
+CREATE VIEW [dbo].[V_UretimDuruslari]
+AS
+SELECT     dbo.UretimOperasyonlari.OID AS UretimOperasyon, dbo.UretimDuruslari.OID AS UretimDurusId, dbo.Uretimler.OID AS UretimId, dbo.Duruslar.DurusKod, 
+                      dbo.Duruslar.DurusAd, ISNULL(dbo.Duruslar.IsEmriBaglanti, 0) AS IsEmriBaglanti, dbo.Duruslar.DurusTip, '' AS DurusAciklama, dbo.UretimDuruslari.BaslangicTarihi, 
+                      dbo.Duruslar.DurusId AS DurusTanimId, dbo.UretimDuruslari.Aciklama, dbo.UretimDuruslari.BitisTarihi, dbo.UretimDuruslari.DurusSuresi, dbo.UretimDuruslari.Durum, 
+                      dbo.UretimOperasyonlari.IstasyonId, dbo.UretimOperasyonlari.IstasyonKod, dbo.Istasyonlar.IstasyonAd
+FROM         dbo.UretimOperasyonlari WITH (NOLOCK) INNER JOIN
+                      dbo.UretimDuruslari ON dbo.UretimOperasyonlari.OID = dbo.UretimDuruslari.UretimOperasyon INNER JOIN
+                      dbo.Uretimler WITH (NOLOCK) ON dbo.UretimOperasyonlari.Uretim = dbo.Uretimler.OID LEFT OUTER JOIN
+                      dbo.Istasyonlar ON dbo.UretimOperasyonlari.IstasyonId = dbo.Istasyonlar.IstasyonId LEFT OUTER JOIN
+                      dbo.Duruslar WITH (NOLOCK) ON dbo.UretimDuruslari.DurusNedeniId = dbo.Duruslar.DurusId
+
+
+

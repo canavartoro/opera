@@ -1,0 +1,157 @@
+﻿
+IF N'#ErpTur#' = N'Progress' BEGIN
+
+CREATE PROC [dbo].[sp_SayimAktar]
+(
+@SayimEmri INT,
+@Kullanici INT,
+@SayimFarkDepo INT,
+@SayimFarkRaf INT
+)
+AS
+BEGIN
+ 
+DECLARE @UstBelgeNo BIGINT
+DECLARE @Status BIT
+ 
+BEGIN TRY
+ 
+BEGIN TRANSACTION
+SET @Status = 1
+ 
+/*Üst Çıkış Belgesi*/
+INSERT INTO dbo.AmbalajHareketleri (BelgeNo, BelgeTarihi, Aciklama1, Aciklama2, Olusturan, Durum)
+SELECT @SayimEmri AS BelgeNo, GETDATE() AS BelgeTarihi, N'Sayım Fark Çıkış Transfer İşlemi' AS Aciklama1, 'Procedure' AS Aciklama2, @Kullanici AS Olusturan, 0 AS Durum SELECT @UstBelgeNo = SCOPE_IDENTITY()
+PRINT N'Çıkış Ust Hareket Kaydı ID ' + CONVERT(NVARCHAR, @UstBelgeNo)
+/*--------------------------------------------------------------------*/
+ 
+ 
+/*Detay Çıkış Belgesi*/
+ 
+INSERT INTO dbo.AmbalajHareketDetaylari
+(AmbalajHareket, MalzemeId, MalzemeKod, BirimId, Birim, Birim2Id, Birim2, Miktar, Miktar2,
+HedefDepo, KaynakDepo, HedefRaf, KaynakRaf, KaynakAmbalaj, Ambalaj, Olusturan, OlusturmaTarihi, Durum)
+SELECT @UstBelgeNo AS AmbalajHareket, dbo.AmbalajDetaylari.MalzemeId, dbo.AmbalajDetaylari.MalzemeKod,
+dbo.AmbalajDetaylari.BirimId, dbo.AmbalajDetaylari.Birim, dbo.AmbalajDetaylari.Birim2Id,
+dbo.AmbalajDetaylari.Birim2, dbo.AmbalajDetaylari.Kalan AS Miktar, dbo.AmbalajDetaylari.Kalan2 AS Miktar2,
+@SayimFarkDepo AS HedefDepo, dbo.Ambalajlar.DepoId, @SayimFarkRaf AS HedefRaf, dbo.Ambalajlar.RafId AS KaynakRaf,
+dbo.Ambalajlar.OID AS KaynakAmbalaj, dbo.Ambalajlar.OID AS Ambalaj, @Kullanici AS Olusturan,  GETDATE() AS OlusturmaTarihi, 0 AS Durum
+FROM dbo.Ambalajlar
+INNER JOIN dbo.AmbalajDetaylari
+ON dbo.Ambalajlar.OID = dbo.AmbalajDetaylari.Ambalaj
+WHERE (NOT (dbo.Ambalajlar.Durum IN (4, 8))) AND (NOT (dbo.Ambalajlar.DepoId = @SayimFarkDepo AND dbo.Ambalajlar.RafId = @SayimFarkRaf))
+PRINT N'Çıkış Belgesi Detay Kaydı ' + CONVERT(NVARCHAR, @@ROWCOUNT)
+/*-------------------------------------------------------------------------------------------------------*/
+ 
+ 
+/*Ambalajlar Sanal Depo ve Raf' lara Setleniyor. Durumu Kapalı ve Çıkış Olanlar Hariç*/
+UPDATE dbo.Ambalajlar SET dbo.Ambalajlar.RafId = @SayimFarkRaf, dbo.Ambalajlar.DepoId = @SayimFarkDepo
+WHERE (NOT (dbo.Ambalajlar.Durum IN (4, 8))) AND (NOT (dbo.Ambalajlar.DepoId = @SayimFarkDepo AND dbo.Ambalajlar.RafId = @SayimFarkRaf))
+PRINT N'Ambalaj Kayıtları Sanal Depo/Raf a Setlendi ' + CONVERT(NVARCHAR, @@ROWCOUNT)
+/*-------------------------------------------------------------------------------------------------------*/
+ 
+ 
+/*Çıkış Belgesinin Durumu Tamamlandı Olarak Ayarlanıyor*/
+UPDATE AmbalajHareketDetaylari SET Durum = 1
+WHERE AmbalajHareket = @UstBelgeNo
+ 
+UPDATE AmbalajHareketleri SET Durum = 1
+WHERE OID = @UstBelgeNo
+/*-------------------------------------------------------------------------------------------------------*/
+ 
+ 
+/*Üst Giriş Belgesi*/
+INSERT INTO dbo.AmbalajHareketleri (BelgeNo, BelgeTarihi, Aciklama1, Aciklama2, Olusturan, Durum)
+SELECT @SayimEmri AS BelgeNo, GETDATE() AS BelgeTarihi, N'Sayım Fark Giriş Transfer İşlemi' AS Aciklama1, 'Procedure' AS Aciklama2, @Kullanici AS Olusturan, 0 AS Durum SELECT @UstBelgeNo = SCOPE_IDENTITY()
+PRINT N'Giriş Ust Hareket Kaydı ID ' + CONVERT(NVARCHAR, @UstBelgeNo)
+/*--------------------------------------------------------------------*/
+ 
+ 
+/*Detay Giriş Belgesi*/
+INSERT INTO dbo.AmbalajHareketDetaylari (AmbalajHareket, MalzemeId, MalzemeKod, BirimId, Birim, Birim2Id, Birim2,
+Miktar, Miktar2, HedefDepo, KaynakDepo, HedefRaf, KaynakRaf, KaynakAmbalaj, Ambalaj, Olusturan, OlusturmaTarihi, Durum)
+SELECT @UstBelgeNo AS AmbalajHareket, MalzemeId, MalzemeKod, BirimId, Birim, Birim2Id, Birim2, Miktar, Miktar2,
+DepoId AS HedefDepo, @SayimFarkDepo AS KaynakDepo, RafId AS HedefRaf, @SayimFarkRaf AS KaynakRaf,
+AmbalajId AS KaynakAmbalaj, AmbalajId AS Ambalaj, 1 AS Olusturan, GETDATE() AS OlusturmaTarihi, 0 AS Durum
+FROM SayimDetaylari WITH (NOLOCK)
+WHERE (SayimEmriId = @SayimEmri) AND (Durum = 3)
+ 
+PRINT N'Giriş Belgesi Detay Kaydı ' + CONVERT(NVARCHAR, @@ROWCOUNT)
+/*--------------------------------------------------------------------*/
+ 
+ 
+/*Giriş Belgesinin Durumu Tamamlandı Olarak Ayarlanıyor*/
+UPDATE AmbalajHareketDetaylari SET Durum = 1
+WHERE AmbalajHareket = @UstBelgeNo
+ 
+UPDATE AmbalajHareketleri SET Durum = 1
+WHERE OID = @UstBelgeNo
+/*-------------------------------------------------------------------------------------------------------*/
+ 
+ 
+ 
+/*AMBALAJ MİKTAR BİLGİLERİ GÜNCELLENİYOR*/
+/*Ambalaj Ust Bilgileri Update Ediliyor*/
+UPDATE dbo.Ambalajlar SET
+dbo.Ambalajlar.RafId = dbo.SayimDetaylari.RafId,
+dbo.Ambalajlar.DepoId = dbo.SayimDetaylari.DepoId
+FROM dbo.Ambalajlar
+INNER JOIN dbo.AmbalajDetaylari ON dbo.Ambalajlar.OID = dbo.AmbalajDetaylari.Ambalaj
+INNER JOIN dbo.SayimDetaylari ON dbo.SayimDetaylari.AmbalajId = dbo.Ambalajlar.OID
+WHERE  (dbo.SayimDetaylari.SayimEmriId = @SayimEmri) AND (dbo.SayimDetaylari.Durum = 3)
+ 
+PRINT N'Güncellenen Ambalaj Ust Belge Sayısı ' + CONVERT(NVARCHAR, @@ROWCOUNT)
+/*-------------------------------------------------------------------------------------------------------*/
+ 
+ 
+ 
+/*/*Ambalaj Detay Bilgileri Update Ediliyor*/*/
+UPDATE dbo.AmbalajDetaylari SET
+dbo.AmbalajDetaylari.Kalan = dbo.SayimDetaylari.OkunanMiktar,
+dbo.AmbalajDetaylari.Kalan2 = dbo.SayimDetaylari.OkunanMiktar
+FROM dbo.Ambalajlar
+INNER JOIN dbo.AmbalajDetaylari ON dbo.Ambalajlar.OID = dbo.AmbalajDetaylari.Ambalaj
+INNER JOIN dbo.SayimDetaylari ON dbo.SayimDetaylari.AmbalajId = dbo.Ambalajlar.OID
+WHERE  (dbo.SayimDetaylari.SayimEmriId = @SayimEmri) AND (dbo.SayimDetaylari.Durum = 3)
+PRINT N'Güncellenen Ambalaj Detay Belge Sayısı ' + CONVERT(NVARCHAR, @@ROWCOUNT)
+/*-------------------------------------------------------------------------------------------------------*/
+ 
+ 
+/*
+/*Sayım Detayları Hareket Gören Tamamlandı Olan Kayıtlar Kapandı Olarak Setleniyor*/
+UPDATE SayimDetaylari SET Durum = 5
+WHERE (SayimEmriId = @SayimEmri) AND (Durum = 1)
+/*--------------------------------------------------------------------*/
+ 
+/*Sayımlar Hareket Gören Tamamlandı Olan Kayıtlar Kapandı Olarak Setleniyor*/
+UPDATE Sayimlar SET Durum = 5
+WHERE (SayimEmri = @SayimEmri) AND (Durum = 1)
+/*--------------------------------------------------------------------*/
+ 
+/*Sayım Emri Belgesi Kapanıyor*/
+UPDATE SayimEmirleri SET
+DurumAciklama = N'Sayım Emri Kapandı (Procedure)',
+Guncelleyen = @Kullanici,
+GuncellemeTarihi = GETDATE(),
+Durum = 5
+WHERE OID = @SayimEmri
+/*--------------------------------------------------------------------*/
+*/
+ 
+COMMIT TRANSACTION                
+END TRY
+BEGIN CATCH
+ 
+IF @@TRANCOUNT > 0 BEGIN
+ROLLBACK TRANSACTION
+SET @Status = 0
+END
+ 
+END CATCH
+ 
+ 
+SELECT @Status
+  
+END
+
+END

@@ -1,0 +1,40 @@
+ALTER VIEW [dbo].[V_KutuEtiket]
+AS
+SELECT     Barkod, MalzemeKod, MalzemeAd, Birim, Miktar2, Miktar, Toplam2, Toplam, Tarih, Tarih2, Zaman, PaletSiraNo, CariKod, CariAd, MusteriKod, 
+                      MusteriAd, PersonelKod, PersonelAd, EkAlan1, EkAlan2, EkAlan3, EkAlan4, UretimId, AmbalajId, CariId, MalzemeId, KutuSiraNo
+FROM         (SELECT     A.Barkod, M.MalzemeKod, M.MalzemeAd, U.Birim, CONVERT(DECIMAL(18, 2), SUM(U.Miktar)) AS Miktar2, CONVERT(VARCHAR, 
+                                              CAST(SUM(U.Miktar) AS MONEY), 1) AS Miktar, CONVERT(DECIMAL(18, 2), MAX(D.Kalan)) AS Toplam2, CONVERT(VARCHAR, 
+                                              CAST(MAX(D.Kalan) AS MONEY), 1) AS Toplam, CONVERT(VARCHAR(10), MAX(U.BitisTarihi), 103) AS Tarih, CONVERT(VARCHAR(10), 
+                                              MAX(U.BitisTarihi), 110) AS Tarih2, CONVERT(VARCHAR(5), MAX(U.BitisTarihi), 24) AS Zaman, ISNULL(A.PartiNo, '') AS PartiNo, 
+                                              ISNULL(A.PaletSiraNo, 0) AS PaletSiraNo, ISNULL(C.CariKod, '') AS CariKod, ISNULL(C.CariAd, '') AS CariAd, ISNULL(L.MusteriKod, '') 
+                                              AS MusteriKod, ISNULL(L.MusteriAd, '') AS MusteriAd, '' AS PersonelKod, '' AS PersonelAd, ISNULL(U.EkAlan1, '999 KG') AS EkAlan1, 
+                                              ISNULL(U.EkAlan2, '999 KG') AS EkAlan2, ISNULL(U.EkAlan3, '999 KG') AS EkAlan3, ISNULL(U.EkAlan4, '999 KG') AS EkAlan4, MIN(U.OID) 
+                                              AS UretimId, U.Ambalaj AS AmbalajId, ISNULL(C.CariId, 0) AS CariId, U.MalzemeId, U.KutuSiraNo
+                       FROM          dbo.Ambalajlar AS A WITH (NOLOCK) INNER JOIN
+                                              dbo.UretimOperasyonlari AS U WITH (NOLOCK) ON A.OID = U.Ambalaj LEFT OUTER JOIN
+                                              dbo.Malzemeler AS M WITH (NOLOCK) ON U.MalzemeId = M.MalzemeId LEFT OUTER JOIN
+                                              dbo.AmbalajDetaylari AS D WITH (NOLOCK) ON A.OID = D.Ambalaj LEFT OUTER JOIN
+                                              dbo.MusteriMalzemeleri AS L WITH (NOLOCK) ON U.MalzemeId = L.MalzemeId AND L.CariId = U.CariId LEFT OUTER JOIN
+                                              dbo.Kullanicilar AS K WITH (NOLOCK) ON U.Olusturan = K.KullaniciId LEFT OUTER JOIN
+                                              dbo.Cariler AS C WITH (NOLOCK) ON U.CariId = C.CariId
+                       GROUP BY C.CariId, U.Ambalaj, A.Barkod, U.MalzemeId, M.MalzemeKod, M.MalzemeAd, U.Birim, A.PartiNo, A.PaletSiraNo, C.CariKod, C.CariAd, 
+                                              L.MusteriKod, L.MusteriAd, U.EkAlan1, U.EkAlan2, U.EkAlan3, U.EkAlan4, U.KutuSiraNo
+                       UNION
+                       SELECT     AMB.Barkod, CASE WHEN MLZ.MalzemeKod IS NULL THEN AMBD.MalzemeKod ELSE MLZ.MalzemeKod END AS MalzemeKod, 
+                                             ISNULL(MLZ.MalzemeAd, '') AS MalzemeAd, CASE WHEN BRM.Birim IS NULL THEN AMBD.Birim ELSE BRM.Birim END AS Birim, 
+                                             CONVERT(DECIMAL(18, 2), AMBD.Kalan) AS Miktar2, CONVERT(VARCHAR, CAST(AMBD.Kalan AS MONEY), 1) AS Miktar, 
+                                             CONVERT(DECIMAL(18, 2), AMBD.Kalan) AS Toplam2, CONVERT(VARCHAR, CAST(AMBD.Kalan AS MONEY), 1) AS Toplam, 
+                                             CONVERT(VARCHAR(10), AMB.OlusturmaTarihi, 126) AS Tarih, CONVERT(VARCHAR(10), AMB.OlusturmaTarihi, 110) AS Tarih2, 
+                                             CONVERT(VARCHAR(5), AMB.OlusturmaTarihi, 24) AS Zaman, ISNULL(AMB.PartiNo, '') AS PartiNo, ISNULL(AMB.PaletSiraNo, 0) 
+                                             AS PaletSiraNo, ISNULL(CR.CariKod, '') AS CariKod, ISNULL(CR.CariAd, '') AS CariAd, ISNULL(L.MusteriKod, '') AS MusteriKod, 
+                                             ISNULL(L.MusteriAd, '') AS MusteriAd, '' AS PersonelKod, '' AS PersonelAd, '999 KG' AS EkAlan1, '999 KG' AS EkAlan2, '999 KG' AS EkAlan3, 
+                                             '999 KG' AS EkAlan4, ISNULL(OP.OID, 0) AS UretimId, AMB.OID AS AmbalajId, CR.CariId, AMBD.MalzemeId, OP.KutuSiraNo
+                       FROM         dbo.Ambalajlar AS AMB WITH (NOLOCK) LEFT OUTER JOIN
+                                             dbo.AmbalajDetaylari AS AMBD WITH (NOLOCK) ON AMB.OID = AMBD.Ambalaj LEFT OUTER JOIN
+                                             dbo.Birimler AS BRM WITH (NOLOCK) ON AMBD.BirimId = BRM.BirimId LEFT OUTER JOIN
+                                             dbo.Malzemeler AS MLZ WITH (NOLOCK) ON AMBD.MalzemeId = MLZ.MalzemeId LEFT OUTER JOIN
+                                             dbo.Cariler AS CR WITH (NOLOCK) ON AMB.CariId = CR.CariId LEFT OUTER JOIN
+                                             dbo.UretimOperasyonlari AS OP WITH (NOLOCK) ON AMB.UretimOperasyon = OP.OID LEFT OUTER JOIN
+                                             dbo.Kullanicilar AS K WITH (NOLOCK) ON AMB.Olusturan = K.KullaniciId LEFT OUTER JOIN
+                                             dbo.MusteriMalzemeleri AS L WITH (NOLOCK) ON AMBD.MalzemeId = L.MalzemeId AND L.CariId = AMB.CariId
+                       WHERE     (AMB.UretimOperasyon > 0) AND (AMB.Durum = 5)) AS XTBL

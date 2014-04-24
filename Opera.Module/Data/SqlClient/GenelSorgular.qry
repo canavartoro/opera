@@ -1,0 +1,82 @@
+﻿
+/*Tablolar Siliniyor*/
+
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_Ambalajlar' AND type = 'U') BEGIN DROP TABLE [dbo].[V_Ambalajlar] END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_AmbalajHareketleri') > 0 BEGIN DROP TABLE [dbo].[V_AmbalajHareketleri]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_AmbalajHareketleriOzet') > 0 BEGIN DROP TABLE [dbo].[V_AmbalajHareketleriOzet]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_Cihazlar') > 0 BEGIN DROP TABLE [dbo].[V_Cihazlar]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_Duruslar') > 0 BEGIN DROP TABLE [dbo].[V_Duruslar]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_EtiketTanimlari') > 0 BEGIN DROP TABLE [dbo].[V_EtiketTanimlari]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_GunlukUretimler') > 0 BEGIN DROP TABLE [dbo].[V_GunlukUretimler]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_HareketDetaylari') > 0 BEGIN DROP TABLE [dbo].[V_HareketDetaylari]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_Hareketler') > 0 BEGIN DROP TABLE [dbo].[V_Hareketler]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_IsEmirleri') > 0 BEGIN DROP TABLE [dbo].[V_IsEmirleri]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_IsEmriDokumanlari') > 0 BEGIN DROP TABLE [dbo].[V_IsEmriDokumanlari]; END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_KullaniciYetkileri' AND type = 'U') BEGIN DROP TABLE [dbo].[V_KullaniciYetkileri] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_KutuEtiket' AND type = 'U') BEGIN DROP TABLE [dbo].[V_KutuEtiket] END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_MalzemeBarkodlari') > 0 BEGIN DROP TABLE [dbo].[V_MalzemeBarkodlari]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_Malzemeler') > 0 BEGIN DROP TABLE [dbo].[V_Malzemeler]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_MalzemeBirimleri') > 0 BEGIN DROP TABLE [dbo].[V_MalzemeBirimleri]; END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_MStokKart' AND type = 'U') BEGIN DROP TABLE [dbo].[V_MStokKart] END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'OperasyonDetaylari') > 0 BEGIN DROP TABLE [dbo].[OperasyonDetaylari]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_Raflar') > 0 BEGIN DROP TABLE [dbo].[V_Raflar]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_SayimFiiliOzet') > 0 BEGIN DROP TABLE [dbo].[V_SayimFiiliOzet]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_SiparisEk') > 0 BEGIN DROP TABLE [dbo].[V_SiparisEk]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_StokHareketleri') > 0 BEGIN DROP TABLE [dbo].[V_StokHareketleri]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_TransferRapor') > 0 BEGIN DROP TABLE [dbo].[V_TransferRapor]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_TransferOkunan') > 0 BEGIN DROP TABLE [dbo].[V_TransferOkunan]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_UretimDuruslar') > 0 BEGIN DROP TABLE [dbo].[V_UretimDuruslar]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_UretimDuruslari') > 0 BEGIN DROP TABLE [dbo].[V_UretimDuruslari]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_UretimHurdalari') > 0 BEGIN DROP TABLE [dbo].[V_UretimHurdalari]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_UretimIscilik') > 0 BEGIN DROP TABLE [dbo].[V_UretimIscilik]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_UretimQuery01') > 0 BEGIN DROP TABLE [dbo].[V_UretimQuery01]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_Siparisler') > 0 BEGIN DROP TABLE [dbo].[V_Siparisler]; END
+IF (SELECT COUNT(*) FROM sys.tables WITH (NOLOCK) WHERE name = N'V_Viewler') > 0 BEGIN DROP TABLE [dbo].[V_Viewler]; END
+
+/*Viewlar Siliniyor*/
+IF (SELECT COUNT(*) FROM sys.views WITH (NOLOCK) WHERE name = N'V_UretimDuruslar') > 0 BEGIN DROP VIEW [dbo].[V_UretimDuruslar]; END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_Ambalajlar' AND type = 'V') BEGIN DROP VIEW [dbo].[V_Ambalajlar] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_GunlukUretimler' AND type = 'V') BEGIN DROP VIEW [dbo].[V_GunlukUretimler] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_KullaniciYetkileri' AND type = 'V') BEGIN DROP VIEW [dbo].[V_KullaniciYetkileri] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_KutuEtiket' AND type = 'V') BEGIN DROP VIEW [dbo].[V_KutuEtiket] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_MStokKart' AND type = 'V') BEGIN DROP VIEW [dbo].[V_MStokKart] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_UretimDuruslari' AND type = 'V') BEGIN DROP VIEW [dbo].[V_UretimDuruslari] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_UretimHurdalari' AND type = 'V') BEGIN DROP VIEW [dbo].[V_UretimHurdalari] END
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = 'V_UretimQuery01' AND type = 'V') BEGIN DROP VIEW [dbo].[V_UretimQuery01] END
+
+
+/*Procedure' ler Siliniyor*/
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'sp_UretimSonuKaydi') BEGIN DROP PROCEDURE sp_UretimSonuKaydi END
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'sp_SayimAktar') BEGIN DROP PROCEDURE sp_SayimAktar END
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'sp_SayimFarkRapor') BEGIN DROP PROCEDURE sp_SayimFarkRapor END
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'sp_SayimListe') BEGIN DROP PROCEDURE sp_SayimListe END
+
+/*
+-- Fonksiyon (Uretim)
+IF OBJECT_ID(N'f_UretilenMiktar', 'FN') IS NOT NULL BEGIN DROP FUNCTION f_UretilenMiktar END
+GO
+CREATE FUNCTION [dbo].[f_UretilenMiktar]
+(
+	@ISEMRIID		INT,
+	@OPERASYONID	INT
+)
+RETURNS FLOAT
+--WITH ENCRYPTION
+AS BEGIN
+DECLARE @URETILEN FLOAT
+
+SELECT @URETILEN = SUM(Miktar) FROM dbo.UretimOperasyonlari WITH (NOLOCK) WHERE IsEmriId = @ISEMRIID AND OperasyonId = @OPERASYONID
+
+RETURN ISNULL(@URETILEN, 0)
+
+END
+GO -- URETIMDE DUZELTME
+IF (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME = 'IsEmri' AND TABLE_NAME = N'UretimOperasyonlari') > 0 BEGIN
+	EXEC('UPDATE UretimOperasyonlari set IsEmriId = IsEmri where IsEmriId is null and IsEmri is not null')
+	ALTER TABLE UretimOperasyonlari DROP COLUMN IsEmri
+END
+IF OBJECT_ID(N'sonra', 'FN') IS NOT NULL BEGIN DROP FUNCTION dbo.sonra END
+GO
+CREATE FUNCTION dbo.sonra() RETURNS NVARCHAR(30) AS BEGIN RETURN N'update sonrasi' END
+GO 
+*/

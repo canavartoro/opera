@@ -1,0 +1,35 @@
+﻿CREATE OR REPLACE VIEW BARSET."V_KullaniciYetkileri"
+AS 
+SELECT
+"Kullanicilar"."KullaniciKod",
+"Kullanicilar"."KullaniciAd",
+"Kullanicilar"."Aciklama"  AS "KullaniciSoyad",
+"Kullanicilar"."Departman",
+"Gruplar"."GrupKod",
+"Gruplar"."GrupAciklama",
+"Menuler"."MenuKod" AS "MenuKod",
+"Menuler"."Aciklama" AS "MenuAd",
+"Menuler"."UstMenuId" AS "UstMenuId",
+"Menuler"."Ekran" AS "Ekran",
+"Menuler"."DllModul",
+"GrupDetaylari"."Giris",
+"GrupDetaylari"."Yazma",
+"GrupDetaylari"."Guncelleme",
+"GrupDetaylari"."Silme",
+"KullaniciDetaylari"."OID" as "KullaniciDetaylariId",
+"Gruplar"."OID" as "GrupId",
+"GrupDetaylari"."OID" as "GrupDetaylariId",
+"GrupDetaylari"."MenuId",
+"GrupDetaylari"."HareketId",
+"GrupDetaylari"."DepoId" as "RafId",
+"Menuler"."CihazTip",
+"Menuler"."Durum",
+"Kullanicilar"."KullaniciId" as "Oid",
+"Kullanicilar"."KullaniciId",
+"Kullanicilar"."KullaniciId2" as "RefId",
+"Kullanicilar"."KullaniciId2",
+"Menuler"."ModulVersiyon"
+ FROM "Gruplar" INNER JOIN "KullaniciDetaylari"  ON "Gruplar"."OID" = "KullaniciDetaylari"."GrupId"
+INNER JOIN "GrupDetaylari"   ON "GrupDetaylari"."GrupId" = "Gruplar"."OID"
+INNER JOIN "Kullanicilar"  ON "KullaniciDetaylari"."KullaniciId" = "Kullanicilar"."KullaniciId"
+LEFT OUTER JOIN "Menuler"   ON "GrupDetaylari"."MenuId" = "Menuler"."OID"

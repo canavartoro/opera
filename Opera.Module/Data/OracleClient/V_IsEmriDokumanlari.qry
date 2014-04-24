@@ -1,0 +1,10 @@
+﻿create or replace view "V_IsEmriDokumanlari" 
+as select 
+ROWNUM as "IsEmriDokumanId",
+W.WORDER_M_ID as "IsEmriId",
+W.WORDER_NO as "IsEmriNo", 
+'' as "MalzemeId",
+'' as "MalzemeKod",
+U.LONG_FILE_NAME as "DosyaYolu", 
+U.SH0RT_FILE_NAME as "DosyaAdi" 
+from UYUMSOFT.PRDT_WORDER_M W INNER JOIN UYUMSOFT.PRDD_PRODUCT_ROUTE_M R ON W.PRODUCT_ROUTE_M_ID = R.PRODUCT_ROUTE_M_ID INNER JOIN UYUMSOFT.GNLD_UPLOAD_FILE U ON R.PRODUCT_ROUTE_M_ID = U.RELATION_ID

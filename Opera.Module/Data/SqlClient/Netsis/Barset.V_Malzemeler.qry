@@ -1,0 +1,9 @@
+﻿CREATE VIEW [Barset].[V_Malzemeler]
+AS
+SELECT 
+	Barset.fn_MikrobarKey(STOK_KODU) AS MalzemeId, STOK_KODU AS MalzemeKod, 
+	STOK_ADI AS MalzemeAd, ISNULL(ONCEKI_KOD, '') AS MalzemeAd2, ISNULL(GRUP_KODU, '') AS TipKod, 
+	Barset.fn_MikrobarKey(OLCU_BR1) AS BirimId,OLCU_BR1 AS Birim,
+	CASE WHEN BILESENMI = N'E' THEN 1 WHEN MAMULMU = N'E' THEN 3 ELSE 2 END AS Tip
+FROM dbo.TBLSTSABIT WITH (NOLOCK) WHERE ( 1 = 1 )  
+GO

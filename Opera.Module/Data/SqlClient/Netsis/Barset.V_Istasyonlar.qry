@@ -1,0 +1,6 @@
+﻿CREATE VIEW [Barset].[V_Istasyonlar] AS
+	SELECT M.INCKEYNO AS IstasyonId, M.ISTKODU AS IstasyonKod, Barset.fn_Turkcelestir(M.DEMIR_ISMI) AS IstasyonAd, M.DEMIR_KODU AS Aciklama, 0 AS FasonIstasyon,
+	Barset.fn_MikrobarKey(T.ISTKODU) AS IsMerkeziId, T.ISTKODU AS IsMerkeziKod, Barset.fn_Turkcelestir(T.ISTISIM) AS IsMerkeziAd, 
+	Barset.fn_MikrobarKey(M.I_YEDEK3) AS MalzemeCikisDepoId, Barset.fn_MikrobarKey(M.I_YEDEK3) AS YariMamulCikisDepoId, Barset.fn_MikrobarKey(M.I_YEDEK3) AS YariMamulGirisDepoId, Barset.fn_MikrobarKey(M.I_YEDEK3) AS UrunGirisDepoId
+	FROM dbo.TBLMRPMAKINE AS M WITH (NOLOCK) LEFT OUTER JOIN dbo.TBLISTASYON AS T WITH (NOLOCK) ON M.ISTKODU = T.ISTKODU
+

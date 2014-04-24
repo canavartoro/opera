@@ -1,0 +1,15 @@
+CREATE VIEW [dbo].[V_UretimHurdalari]
+AS
+SELECT     dbo.UretimHurdalari.UretimOperasyon, dbo.UretimHurdalari.OID AS UretimHurdaId, dbo.UretimHurdalari.MalzemeId, 
+                      dbo.Malzemeler.MalzemeId AS HurdaMalzemeId, dbo.Malzemeler.MalzemeKod AS HurdaMalzemeKod, 
+                      dbo.Malzemeler.MalzemeAd AS HurdaMalzemeAd, dbo.UretimHurdalari.HurdaTipi, dbo.Hurdalar.HurdaId, dbo.Hurdalar.HurdaKod, 
+                      dbo.Hurdalar.HurdaAd, dbo.Depolar.DepoId, dbo.Depolar.DepoKod, dbo.Depolar.DepoAd, dbo.UretimHurdalari.Birim, dbo.UretimHurdalari.AmbalajId, 
+                      dbo.UretimHurdalari.PartiNo, dbo.UretimHurdalari.Miktar, dbo.UretimHurdalari.Aciklama1 AS Aciklama, dbo.UretimHurdalari.Durum
+FROM         dbo.UretimOperasyonlari INNER JOIN
+                      dbo.UretimHurdalari ON dbo.UretimOperasyonlari.OID = dbo.UretimHurdalari.UretimOperasyon LEFT OUTER JOIN
+                      dbo.Depolar ON dbo.UretimHurdalari.DepoId = dbo.Depolar.DepoId LEFT OUTER JOIN
+                      dbo.Hurdalar ON dbo.UretimHurdalari.HurdaNedeniId = dbo.Hurdalar.HurdaId LEFT OUTER JOIN
+                      dbo.Malzemeler ON dbo.UretimHurdalari.MalzemeId = dbo.Malzemeler.MalzemeId
+WHERE     (dbo.UretimOperasyonlari.Durum = 0) AND (dbo.UretimHurdalari.Durum = 0)
+
+

@@ -1,0 +1,9 @@
+﻿CREATE VIEW dbo.V_GunlukUretimler AS
+SELECT TOP 10 M.MalzemeKod, M.MalzemeAd, SUM(O.Miktar) AS Miktar,
+(SELECT SUM(Miktar) AS Miktar2 FROM dbo.UretimOperasyonlari O2 WITH (NOLOCK) WHERE Miktar > 0 AND MalzemeId = O.MalzemeId AND YEAR(BitisTarihi) = YEAR(GETDATE()) AND MONTH(BitisTarihi) = MONTH(GETDATE())) AS Aylik
+FROM 
+	dbo.UretimOperasyonlari O WITH (NOLOCK) LEFT OUTER JOIN 
+	dbo.Malzemeler M WITH (NOLOCK) ON O.MalzemeId = M.MalzemeId
+WHERE CAST(O.BitisTarihi AS DATE) = CAST(GETDATE() AS DATE)
+GROUP BY O.MalzemeId, M.MalzemeKod, M.MalzemeAd
+--ORDER BY Miktar DESC --M.MalzemeKod

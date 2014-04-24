@@ -1,0 +1,30 @@
+﻿CREATE VIEW [dbo].[V_MStokKart]
+AS
+SELECT 
+	AMB.Barkod,
+	CASE WHEN BRM.Birim IS NULL THEN AMBD.Birim ELSE BRM.Birim END AS Birim,
+	CONVERT(DECIMAL(18,2), AMBD.Kalan) AS Kalan,
+	CASE WHEN BRM2.Birim IS NULL THEN AMBD.Birim2 ELSE BRM2.Birim END AS Birim2,
+	CONVERT(DECIMAL(18,2), AMBD.Kalan2) AS Kalan2,
+	CASE WHEN MLZ.MalzemeKod IS NULL THEN AMBD.MalzemeKod ELSE MLZ.MalzemeKod END AS MalzemeKod,
+	ISNULL(MLZ.MalzemeAd, '') AS MalzemeAd,
+	ISNULL(CR.CariKod, '') AS CariKod,
+	ISNULL(CR.CariAd, '') AS CariAd,
+	AMB.OlusturmaTarihi AS Tarih,
+	ISNULL(DP.DepoKod, '') AS DepoKod,
+	ISNULL(DP.DepoAd, '') AS DepoAd,
+	ISNULL(AMB.PartiNo, '') AS PartiNo,
+	CASE WHEN OP.IsEmriNo IS NULL THEN ISNULL(AMB.IsEmriNo, '') ELSE ISNULL(OP.IsEmriNo, '') END AS IsEmriNo,
+	CASE WHEN OP.IstasyonKod IS NULL THEN ISNULL(AMB.IstasyonKod, '') ELSE ISNULL(OP.IstasyonKod, '') END AS IstasyonKod,
+	K.KullaniciKod AS PersonelKod,
+	K.KullaniciAd AS PersonelAd
+FROM
+	dbo.Ambalajlar AS AMB WITH (NOLOCK) LEFT OUTER JOIN 
+	dbo.AmbalajDetaylari AS AMBD WITH (NOLOCK) ON AMB.OID = AMBD.Ambalaj LEFT OUTER JOIN
+	dbo.Birimler AS BRM WITH (NOLOCK) ON AMBD.BirimId = BRM.BirimId LEFT OUTER JOIN 
+	dbo.Birimler AS BRM2 WITH (NOLOCK) ON AMBD.Birim2Id = BRM2.BirimId LEFT OUTER JOIN 
+	dbo.Malzemeler AS MLZ WITH (NOLOCK) ON AMBD.MalzemeId = MLZ.MalzemeId LEFT OUTER JOIN 
+	dbo.Cariler AS CR WITH (NOLOCK) ON AMB.CariId = CR.CariId LEFT OUTER JOIN
+	dbo.Depolar AS DP WITH (NOLOCK) ON AMB.DepoId = DP.DepoId LEFT OUTER JOIN
+	dbo.UretimOperasyonlari AS OP WITH (NOLOCK) ON AMB.OID = OP.Ambalaj LEFT OUTER JOIN
+	dbo.Kullanicilar AS K WITH (NOLOCK) ON OP.Olusturan = K.KullaniciId

@@ -1,0 +1,4 @@
+﻿CREATE VIEW [Barset].[V_Operasyonlar]
+AS
+SELECT Barset.fn_MikrobarKey(OPKODU) AS OperasyonId, OPKODU AS OperasyonKod, OPISIM AS OperasyonAd, ISTKODU AS DigerKod, ISNULL(ACIKLAMA, '') AS Aciklama FROM dbo.TBLOPERATIONS_KATALOG WITH (NOLOCK) WHERE ( 1 = 1 ) 
+GO

@@ -1,0 +1,15 @@
+﻿CREATE VIEW [dbo].[V_KullaniciYetkileri]
+AS
+SELECT     TOP (100) PERCENT dbo.Kullanicilar.KullaniciKod, dbo.Kullanicilar.KullaniciAd, dbo.Kullanicilar.Aciklama AS KullaniciSoyad, 
+                      dbo.Kullanicilar.Departman, dbo.Gruplar.GrupKod, dbo.Gruplar.GrupAciklama, ISNULL(dbo.Menuler.MenuKod, N'') AS MenuKod, 
+                      ISNULL(dbo.Menuler.Aciklama, '') AS MenuAd, ISNULL(dbo.Menuler.UstMenuId, 0) AS UstMenuId, ISNULL(dbo.Menuler.Ekran, '') AS Ekran, 
+                      dbo.GrupDetaylari.Giris, dbo.GrupDetaylari.Yazma, dbo.GrupDetaylari.Guncelleme, dbo.GrupDetaylari.Silme, 
+                      dbo.KullaniciDetaylari.OID AS KullaniciDetaylariId, dbo.Gruplar.OID AS GrupId, dbo.GrupDetaylari.OID AS GrupDetaylariId, dbo.GrupDetaylari.MenuId, 
+                      dbo.GrupDetaylari.HareketId, dbo.GrupDetaylari.DepoId AS RafId, dbo.Menuler.CihazTip, dbo.Menuler.Durum, dbo.Kullanicilar.KullaniciId AS Oid, 
+                      dbo.Kullanicilar.KullaniciId2 AS RefId, dbo.Kullanicilar.KullaniciId, dbo.Menuler.DllModul
+FROM         dbo.Gruplar WITH (NOLOCK) INNER JOIN
+                      dbo.KullaniciDetaylari WITH (NOLOCK) ON dbo.Gruplar.OID = dbo.KullaniciDetaylari.GrupId INNER JOIN
+                      dbo.GrupDetaylari WITH (NOLOCK) ON dbo.GrupDetaylari.GrupId = dbo.Gruplar.OID INNER JOIN
+                      dbo.Kullanicilar WITH (NOLOCK) ON dbo.KullaniciDetaylari.KullaniciId = dbo.Kullanicilar.KullaniciId LEFT OUTER JOIN
+                      dbo.Menuler WITH (NOLOCK) ON dbo.GrupDetaylari.MenuId = dbo.Menuler.OID
+ORDER BY GrupId

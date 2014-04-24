@@ -1,0 +1,24 @@
+.carimg
+{
+    float:left;
+    width:50%;
+}
+
+dl.cardescr
+{
+    float:right;
+}
+
+.cardescr dt
+{
+    font-size:13px;
+    font-weight:bold;
+    color:Navy;
+    text-align: right;
+}
+
+.cardescr dd
+{
+    color:#999;
+    margin-top:5px;
+}

@@ -1,0 +1,71 @@
+.taskTip
+{
+	font-size:11px;
+}
+
+.sch-column-header:hover
+{
+    background-color: #AACCF6;
+    background-image: -moz-linear-gradient(center top , #EBF3FD, #EBF3FD 39%, #D9E8FB 40%, #D9E8FB);
+    border-left-color: #AACCF6;
+    border-right-color: #AACCF6;
+    cursor:pointer;
+}
+
+.taskTip td
+{
+	width:70px;
+}
+
+.sch-ganttpanel .x-table-layout-cell
+{
+	text-align:left;
+}
+
+/* Ext layout bug correction */
+.sch-ganttpanel .x-region-collapsed-right-placeholder 
+{
+    border-top:0 none;
+    border-bottom:0 none;
+    padding-top:4px;
+}
+
+.sch-ganttpanel .x-grid-cell
+{
+    background:transparent;
+}
+
+.sch-ganttpanel .x-grid-inner-locked .x-grid-row:nth-child(odd)
+{
+    background: url(images/altrow.png) repeat-x scroll 0 0 transparent;
+}
+
+/*
+ * GridFilters Styles
+ */
+
+.ux-filtered-column {
+    font-style: italic;
+    font-weight: bold;
+}
+
+/*
+ * RangeMenu Styles
+ */
+
+.ux-rangemenu-icon {
+    margin-top: 0;
+}
+
+.ux-rangemenu-gt {
+    background-image: url(images/greater_than.png) !important;
+}
+
+.ux-rangemenu-lt {
+    background-image: url(images/less_than.png) !important;
+}
+
+.ux-rangemenu-eq {
+    background-image: url(images/equals.png) !important;
+}
+

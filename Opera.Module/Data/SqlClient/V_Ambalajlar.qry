@@ -1,0 +1,45 @@
+﻿
+alter VIEW [dbo].[V_Ambalajlar]
+AS
+SELECT     dbo.Ambalajlar.SeriNo, dbo.Ambalajlar.Barkod, dbo.Raflar.Barkod AS RafBarkod, dbo.Depolar.Barkod AS DepoBarkod, dbo.Birimler.Birim, 
+                      dbo.AmbalajDetaylari.Miktar, dbo.AmbalajDetaylari.Kalan, dbo.AmbalajDetaylari.Miktar2, dbo.AmbalajDetaylari.Kalan2, 
+                      dbo.Ambalajlar.Dara AS AmbalajDarasi, dbo.AmbalajTurleri.Dara, dbo.Depolar.DepoKod, dbo.Raflar.RafKod, dbo.AmbalajTurleri.Sevkiyat, 
+                      dbo.AmbalajTurleri.Bolunebilirlik, dbo.AmbalajDetaylari.MalzemeId, dbo.AmbalajDetaylari.Birim2Id, dbo.AmbalajDetaylari.BirimId, 
+                      dbo.AmbalajTurleri.Prefix, dbo.Ambalajlar.AmbalajTur AS AmbalajTurId, dbo.Ambalajlar.OID AS AmbalajId, dbo.Ambalajlar.Durum, 
+                      dbo.AmbalajDetaylari.OID AS AmbalajDetayId, dbo.Ambalajlar.IstasyonId, dbo.Ambalajlar.RafId, dbo.Ambalajlar.IsEmriId, dbo.Ambalajlar.IsEmriNo, 
+                      dbo.Ambalajlar.IsEmriTipId, dbo.AmbalajTurleri.MalzemeTip, dbo.Malzemeler.MalzemeKod, dbo.Malzemeler.MalzemeAd, 
+                      ISNULL(dbo.Ambalajlar.OlusturmaTarihi, GETDATE()) AS OlusturmaTarihi, dbo.Ambalajlar.SevkEmriId, dbo.Ambalajlar.SevkEmriDetayId, 
+                      dbo.AmbalajDetaylari.ReferansId, dbo.AmbalajDetaylari.TransferReferansId, dbo.AmbalajDetaylari.TransferReferansDetayId, dbo.Ambalajlar.DepoId, 
+                      dbo.Ambalajlar.UstAmbalaj, dbo.Ambalajlar.KaliteDurum, dbo.Ambalajlar.PartiNo, dbo.AmbalajDetaylari.Birim2, dbo.Istasyonlar.IstasyonKod, 
+                      dbo.Istasyonlar.IstasyonAd, dbo.Renkler.RenkKod, dbo.Ambalajlar.CariId, dbo.Cariler.CariKod, dbo.Cariler.CariAd, dbo.Renkler.Aciklama, 
+                      dbo.Ambalajlar.BelgeNo, dbo.Ambalajlar.SiparisId, dbo.Siparisler.SiparisNo, CONVERT(float, dbo.AmbalajDetaylari.Kalan) AS rKalan,
+                          (SELECT     COUNT(*) AS Expr1
+                            FROM          dbo.Ambalajlar AS X1
+                            WHERE      (UstAmbalaj = dbo.Ambalajlar.OID)) AS AmbalajSayisi, dbo.Ambalajlar.SonKullanmaTarihi, dbo.Ambalajlar.RenkId, 
+                      dbo.AmbalajTurleri.ParcaliUretim, ISNULL(dbo.IsEmirleri.PlanlananMiktar, 0) AS IsEmriMiktar, ISNULL(dbo.Ambalajlar.SiraNo, 0) AS SiraNo, 
+                      ISNULL(dbo.Ambalajlar.RafOmru, 0) AS RafOmru,
+                          (SELECT     TOP (1) S.IrsaliyeNo
+                            FROM          dbo.AmbalajHareketDetaylari AS D WITH (NOLOCK) INNER JOIN
+                                                   dbo.AmbalajHareketleri AS H WITH (NOLOCK) ON D.AmbalajHareket = H.OID INNER JOIN
+                                                   dbo.StokHareketleri AS S WITH (NOLOCK) ON H.StokHareket = S.OID
+                            WHERE      (D.Ambalaj = dbo.Ambalajlar.OID)
+                            ORDER BY H.OID) AS IrsaliyeNo, dbo.IsEmirleri.CizimNo, dbo.Ambalajlar.OperasyonId, dbo.Ambalajlar.SDurum, dbo.Ambalajlar.DurumAciklama, 
+                      dbo.Ambalajlar.SanalStok, dbo.Ambalajlar.OperasyonNo, dbo.Ambalajlar.OperasyonKod, dbo.Ambalajlar.UretimOperasyon, dbo.Ambalajlar.PaletNo, 
+                      dbo.Ambalajlar.PaletSiraNo, dbo.Kullanicilar.KullaniciKod, dbo.Ambalajlar.KaynakModul
+FROM         dbo.Cariler RIGHT OUTER JOIN
+                      dbo.Ambalajlar LEFT OUTER JOIN
+                      dbo.AmbalajDetaylari ON dbo.Ambalajlar.OID = dbo.AmbalajDetaylari.Ambalaj INNER JOIN
+                      dbo.AmbalajTurleri ON dbo.Ambalajlar.AmbalajTur = dbo.AmbalajTurleri.OID LEFT OUTER JOIN
+                      dbo.IsEmirleri INNER JOIN
+                      dbo.Renkler ON dbo.IsEmirleri.RenkId = dbo.Renkler.RenkId ON dbo.Ambalajlar.IsEmriId = dbo.IsEmirleri.IsEmriId AND 
+                      dbo.Ambalajlar.RenkId = dbo.Renkler.RenkId LEFT OUTER JOIN
+                      dbo.Siparisler ON dbo.Ambalajlar.SiparisId = dbo.Siparisler.SiparisId ON dbo.Cariler.CariId = dbo.Ambalajlar.CariId LEFT OUTER JOIN
+                      dbo.Istasyonlar ON dbo.Ambalajlar.IstasyonId = dbo.Istasyonlar.IstasyonId LEFT OUTER JOIN
+                      dbo.Malzemeler ON dbo.AmbalajDetaylari.MalzemeId = dbo.Malzemeler.MalzemeId LEFT OUTER JOIN
+                      dbo.Raflar ON dbo.Ambalajlar.RafId = dbo.Raflar.RafId LEFT OUTER JOIN
+                      dbo.Depolar ON dbo.Raflar.DepoId = dbo.Depolar.DepoId LEFT OUTER JOIN
+                      dbo.Birimler ON dbo.AmbalajDetaylari.BirimId = dbo.Birimler.BirimId LEFT OUTER JOIN
+					  dbo.Kullanicilar ON dbo.Ambalajlar.Olusturan = dbo.Kullanicilar.KullaniciId
+WHERE     (dbo.AmbalajDetaylari.OID IS NOT NULL) AND (dbo.Ambalajlar.Durum <> 4)
+
+GO
